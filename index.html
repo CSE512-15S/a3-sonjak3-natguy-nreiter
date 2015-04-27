@@ -3,6 +3,7 @@
   <meta charset="utf-8">
   <title>A Brief History of Rocket Launches</title>
   <link href='http://fonts.googleapis.com/css?family=Titillium+Web:600' rel='stylesheet' type='text/css'>
+  <link href="css/d3.slider.css" rel="stylesheet" type="text/css">
   <style>
     body {
       background-color: #242424;
@@ -48,9 +49,13 @@
   <p>Map code adapted from <a href="http://techslides.com/d3-map-starter-kit/">techslides</a>.</p>
 
   <div id="container"></div>
+  <div id="slider"></div>
+  <br>
+  <div id="slidermin"></div><div id="slidermax"></div>
 
   <script src="js/d3.min.js"></script>
   <script src="js/topojson.v1.min.js"></script>
+  <script src="js/d3.slider.js"></script>
   <script>
     d3.select(window).on("resize", throttle);
 
@@ -198,7 +203,41 @@
           .on("mouseout",  function(d,i) {
             tooltip.classed("hidden", true);
           }); 
+    }
 
+    var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    var initialvalues = [1957.7, 2015.2];
+    d3.select('#slider')
+      .style("width", width + "px")
+      .style("margin", "0px auto")
+      .call(d3.slider()
+        .axis(true)
+        .min(initialvalues[0])
+        .max(initialvalues[1])
+        .value(initialvalues)
+        .on("slide", updateSliderValues));
+
+    updateSliderValues(null, initialvalues);
+
+    // value = [ mindate, maxdate ] in decimal form
+    function updateSliderValues(evt, value) {
+      var mindate = convertDecimalDate(value[0]);
+      var maxdate = convertDecimalDate(value[1]);
+      d3.select("#slidermin").text(months[mindate.getMonth()] + " " + mindate.getFullYear());
+      d3.select("#slidermax").text(months[maxdate.getMonth()] + " " + maxdate.getFullYear());
+    }
+
+    function leapYear(year) {
+      return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
+    };
+
+    function convertDecimalDate(decimalDate) {
+      var year = parseInt(decimalDate);
+      var remainder = decimalDate - year;
+      var daysPerYear = leapYear(year) ? 366 : 365;
+      var miliseconds = remainder * daysPerYear * 24 * 60 * 60 * 1000;
+      var yearDate = new Date(year, 0, 1);
+      return new Date(yearDate.getTime() + miliseconds);
     }
   </script>
 </body>
