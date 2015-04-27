@@ -19,7 +19,7 @@ This is an application that visualizes the history of space rocket launches acro
 The data for this assignment was taken from several separate sources and merged together:
 
 * The "launchlog" list of satellite orbital launches and launch attempts [here](http://planet4589.org/space/log/launchlog.txt). This document provides details on over 5,000 launches over the period of 1957 to 2015.
-* The "SATCAT" satellite catelog, found [here](https://celestrak.com/pub/satcat.txt). This data set is not as large as the first, because it only includes objects that actually went into space (and doesn't document failures). However, it provides further information about orbits and launch sites which we combined with the launchlog data.
+* The "SATCAT" satellite catalog, found [here](https://celestrak.com/pub/satcat.txt). This data set is not as large as the first, because it only includes objects that actually went into space (and doesn't document failures). However, it provides further information about orbits and launch sites which we combined with the launchlog data.
 * Latitude/longitude data of worldwide launch sites taken from many different sites (primarily [Wikipedia](https://www.wikipedia.org/)).
 
 ## StoryBoard
