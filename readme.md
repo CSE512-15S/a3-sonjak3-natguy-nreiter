@@ -13,6 +13,15 @@ This is an application that visualizes the history of space rocket launches acro
 
 ## Running Instructions
 
+http://cse512-15s.github.io/a3-sonjak3-natguy-nreiter/
+
+OR
+
+clone the repo, run
+
+```python -m SimpleHTTPServer 8000``` 
+
+from the directory and navigate to localhost:8000
 
 ## Data Sources
 
