@@ -216,6 +216,30 @@ return function module() {
                       stepValue(scale.invert(pos / sliderLength))
                     : nearestTick(pos / sliderLength));
         }
+        else
+        {
+          // Get where the user just clicked
+          var pos = d3.mouse(this)[0];
+          var newSliderValue = scale.invert(pos / sliderLength);
+
+          // Get the current slider locations for comparison
+          var leftSliderValue = value[0];
+          var rightSliderValue = value[1];
+
+          // Figure out which slider our click was closest to, in order to move it
+          if (Math.abs(leftSliderValue - newSliderValue) < Math.abs(rightSliderValue - newSliderValue))
+          {
+            // We're closer to the left slider, so move it
+            active = 1;
+          }
+          else
+          {
+            // We're closer to the right slider, so move it
+            active = 2;
+          }
+          // Apply the move operation
+          moveHandle(stepValue(scale.invert(pos / sliderLength)));
+        }
       }
 
       function onClickVertical() {
