@@ -238,7 +238,9 @@ return function module() {
             active = 2;
           }
           // Apply the move operation
+          animate = false;
           moveHandle(stepValue(scale.invert(pos / sliderLength)));
+          animate = true;
         }
       }
 
