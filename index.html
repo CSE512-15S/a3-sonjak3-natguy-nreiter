@@ -41,6 +41,14 @@
       opacity: 0.9; 
       position: absolute;
     }
+
+    .launch_success {
+      fill: #00FF00;
+    }
+
+    .launch_failure {
+      fill: #FF0000;
+    }
   </style>
 </head>
 <body>
@@ -57,12 +65,36 @@
   <script src="js/topojson.v1.min.js"></script>
   <script src="js/d3.slider.js"></script>
   <script>
+    // We should wrap this with an onload, and move all the
+    // scripting up into the head
     d3.select(window).on("resize", throttle);
 
     var zoom = d3.behavior.zoom()
         .scaleExtent([1, 9])
         .on("zoom", move);
 
+    var month_map = {
+      'Jan': 1,
+      'Feb': 2,
+      'Mar': 3,
+      'Apr': 4,
+      'May': 5,
+      'Jun': 6,
+      'Jul': 7,
+      'Aug': 8,
+      'Sep': 9,
+      'Oct': 10,
+      'Nov': 11,
+      'Dec': 12
+    };
+
+    var launch_data = {};// [year][month][day]=> [array of entries]
+    loadLaunchData();
+
+    var launch_sites = [];// Stores launch sites
+    loadLaunchSites();
+
+    var current_launches = []; // Stores current launches to display
 
     var width = document.getElementById('container').offsetWidth;
     var height = width / 2;
@@ -125,11 +157,20 @@
           .style("fill", "#606060");
 
       // Add launch sites
-      d3.csv("data/launch_sites.csv", function(err, sites) {
-        sites.forEach(function(i){
-          addpoint(i.Longitude, i.Latitude, i.FullName );
-        });
-      });
+      var site;
+      for(var i=0;i<launch_sites.length;i++) {
+        site = launch_sites[i];
+        addpoint(site.Longitude, site.Latitude, site.FullName, 'launch_site');
+      }
+
+      // Could remove old launches here
+
+      var info;
+      for(var i=0;i<current_launches.length;i++) {
+        info = current_launches[i].info;
+        cls = (info.Success == 'S') ? 'launch_success' : 'launch_failure';
+        addpoint(info.Longitude, info.Latitude, info["Launch Vehicle"], cls);
+      }
     }
 
     function redraw() {
@@ -176,7 +217,7 @@
     }
 
     // add points and text to the map
-    function addpoint(lat,lon,text) {
+    function addpoint(lat,lon,text,cls) {
       //offsets for tooltips
       var offsetL = document.getElementById('container').offsetLeft+20;
       var offsetT = document.getElementById('container').offsetTop+10;
@@ -188,7 +229,7 @@
       gpoint.append("svg:circle")
             .attr("cx", x)
             .attr("cy", y)
-            .attr("class","point")
+            .attr("class","point " + cls)
             .attr("r", 3);
 
       gpoint
@@ -238,6 +279,71 @@
       var miliseconds = remainder * daysPerYear * 24 * 60 * 60 * 1000;
       var yearDate = new Date(year, 0, 1);
       return new Date(yearDate.getTime() + miliseconds);
+    }
+
+    // This loads the launch data from 'massive_launchlog' into
+    // a data structure mapped by 'year'=>'month'=>'day'=>array of entries
+    // Stored in `launch_data`
+    function loadLaunchData() {
+      d3.csv("data/massive_launchlog.csv", function(err, entries) {
+        entries.forEach(function(entry) {
+          var date_parts = entry["Launch Date and Time (UTC)"].split(" ");
+          var year = date_parts[0] * 1;
+          var month = month_map[date_parts[1]];
+          var day = date_parts[2];
+
+          // Ensure data structure is set up
+          if(launch_data[year] == null) {
+            launch_data[year] = {};
+          }
+
+          if(launch_data[year][month] == null) {
+            launch_data[year][month] = {};
+          }
+
+          if(launch_data[year][month][day] == null) {
+            launch_data[year][month][day] = [];
+          }
+
+          launch_data[year][month][day].push(entry);
+        });
+      });
+
+    }
+
+    // Loads launch site data from csv, storing entries in `launch_sites`
+    function loadLaunchSites() {
+      d3.csv("data/launch_sites.csv", function(err, sites) {
+        sites.forEach(function(i){
+          launch_sites.push(i);
+        });
+      });
+    }
+
+    // Adds points for the launches of a given day to the display
+    // list, after clearing the previous display
+    function displayDate(year, month, day) {
+      var entries = [];
+
+      if(launch_data[year] && launch_data[year][month] && launch_data[year][month][day]) {
+        entries = launch_data[year][month][day];
+      }
+
+      // Right now this clears the points completely
+      // Later we may change it to not clear, and just allow
+      // the animation to continue
+      current_launches = [];
+
+      for(var i=0;i<entries.length;i++) {
+        current_launches.push(
+          {
+            birthtime: (new Date()).getTime(),
+            info: entries[i]
+          }
+        );
+      }
+
+      redraw();
     }
   </script>
 </body>
