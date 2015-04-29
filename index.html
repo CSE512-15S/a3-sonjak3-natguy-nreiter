@@ -181,7 +181,6 @@
       draw(topo);
     }
 
-
     function move() {
       var t = d3.event.translate;
       var s = d3.event.scale; 
@@ -260,8 +259,20 @@
 
     updateSliderValues(null, initialvalues);
 
+    // Play-related variables
+    var currentPlayPoint = initialvalues[0];
+    var currentPlayLimit = initialvalues[1];
+    var isPlaying = false;
+    var playTickRepeatTimeout;
+
     // value = [ mindate, maxdate ] in decimal form
     function updateSliderValues(evt, value) {
+      // Cut all playback and update values for next play request
+      clearTimeout(playTickRepeatTimeout);
+      isPlaying = false;
+      currentPlayPoint = value[0];
+      currentPlayLimit = value[1];
+
       var mindate = convertDecimalDate(value[0]);
       var maxdate = convertDecimalDate(value[1]);
       d3.select("#slidermin").text(months[mindate.getMonth()] + " " + mindate.getFullYear());
@@ -276,9 +287,9 @@
       var year = parseInt(decimalDate);
       var remainder = decimalDate - year;
       var daysPerYear = leapYear(year) ? 366 : 365;
-      var miliseconds = remainder * daysPerYear * 24 * 60 * 60 * 1000;
+      var milliseconds = remainder * daysPerYear * 24 * 60 * 60 * 1000;
       var yearDate = new Date(year, 0, 1);
-      return new Date(yearDate.getTime() + miliseconds);
+      return new Date(yearDate.getTime() + milliseconds);
     }
 
     // This loads the launch data from 'massive_launchlog' into
@@ -345,6 +356,43 @@
 
       redraw();
     }
+
+    // Starts playing a sequence of launches at a specified interval
+    function play(interval)
+    {
+      // Default value of 10 ms if not specified
+      interval = typeof interval !== 'undefined' ? interval : 10;      
+
+      isPlaying = true;
+      playTick(interval);
+    }
+
+    // Plays the sequence of all launches starting at the left slider position
+    // and ending at the right slider position. This function will loop
+    // indefinitely, until the right slider position is reached
+    function playTick(interval)
+    {
+      console.log('tick');
+      // Stop playing if we're at the right slider position
+      if (currentPlayPoint >= currentPlayLimit)
+      {
+        isPlaying = false;
+      }
+
+      if (isPlaying)
+      {
+        // Increment date
+        currentPlayPoint += 1.0 / 365.25;
+        var currentDate = convertDecimalDate(currentPlayPoint);
+
+        // Update displayed launches
+        displayDate(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+
+        // This function will be called again in {interval} ms
+        playTickRepeatTimeout = setTimeout(playTick, interval);
+      }
+    }
+
   </script>
 </body>
 </html>
