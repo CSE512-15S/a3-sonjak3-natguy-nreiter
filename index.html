@@ -142,10 +142,12 @@
     d3.json("data/world-topo-min.json", function(error, world) {
       var countries = topojson.feature(world, world.objects.countries).features;
       topo = countries;
-      draw(topo);
+      drawMap(topo);
+      drawLaunchSites();
+      drawLaunchEvents();
     });
 
-    function draw(topo) {
+    function drawMap(topo) {
       var country = g.selectAll(".country").data(topo);
 
       // Add countries
@@ -155,30 +157,49 @@
           .attr("id", function(d,i) { return d.id; })
           .attr("title", function(d,i) { return d.properties.name; })
           .style("fill", "#606060");
+    }
 
+    function drawLaunchSites()
+    {
       // Add launch sites
       var site;
       for(var i=0;i<launch_sites.length;i++) {
         site = launch_sites[i];
         addpoint(site.Longitude, site.Latitude, site.FullName, 'launch_site');
       }
+    }
 
+    function drawLaunchEvents()
+    {
       // Could remove old launches here
-
       var info;
       for(var i=0;i<current_launches.length;i++) {
         info = current_launches[i].info;
         cls = (info.Success == 'S') ? 'launch_success' : 'launch_failure';
         addpoint(info.Longitude, info.Latitude, info["Launch Vehicle"], cls);
       }
-    }
+    }      
 
     function redraw() {
       width = document.getElementById('container').offsetWidth;
       height = width / 2;
       d3.select('svg').remove();
       setup(width,height);
-      draw(topo);
+      drawMap(topo);
+      drawLaunchSites();
+      drawLaunchEvents();
+    }
+
+    function redrawLaunchesOnly()
+    {
+      // Remove map points
+      d3.selectAll("g[class='gpoint']").remove();
+
+      // Redraw launch sites
+      drawLaunchSites();
+
+      // Redraw launch events
+      drawLaunchEvents();
     }
 
     function move() {
@@ -212,7 +233,7 @@
     //geo translation on mouse click in map
     function click() {
       var latlon = projection.invert(d3.mouse(this));
-      console.log(latlon);
+      // console.log(latlon);
     }
 
     // add points and text to the map
@@ -354,7 +375,7 @@
         );
       }
 
-      redraw();
+      redrawLaunchesOnly();
     }
 
     // Starts playing a sequence of launches at a specified interval
@@ -372,7 +393,6 @@
     // indefinitely, until the right slider position is reached
     function playTick(interval)
     {
-      console.log('tick');
       // Stop playing if we're at the right slider position
       if (currentPlayPoint >= currentPlayLimit)
       {
