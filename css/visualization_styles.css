@@ -42,3 +42,36 @@ div.tooltip {
 .launch_failure {
   fill: #FF0000;
 }
+
+#date_selectors {
+  width: 100%;
+  overflow: auto;
+  margin-bottom: 20px;
+}
+
+#start_date_selector {
+  width: 49%;
+  float: left;
+  text-align: right;
+}
+
+#end_date_selector {
+  width: 49%;
+  float: left;
+}
+
+#start_date, #end_date {
+  text-decoration: underline;
+}
+
+#start_date {
+  padding-right: 20px;
+}
+
+#end_date {
+  padding-left: 20px;
+}
+
+.datepicker {
+  z-index: 200;
+}

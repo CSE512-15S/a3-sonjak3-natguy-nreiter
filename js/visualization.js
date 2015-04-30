@@ -1,11 +1,4 @@
-$(document).ready(
-  function() {
-    width = document.getElementById('container').offsetWidth;
-    height = width / 2;
-
-    setup(width, height);
-  }
-);
+$(document).ready(initialSetup);
 
 // We should wrap this with an onload, and move all the
 // scripting up into the head
@@ -45,6 +38,66 @@ var topo,projection,path,svg,g;
 
 var tooltip;
 
+function initialSetup() {
+  width = document.getElementById('container').offsetWidth;
+  height = width / 2;
+
+  $('#start_date').DatePicker({
+    format: 'm/d/Y',
+    date: $('#start_date').text().trim(),
+    current: $('#start_date').text().trim(),
+    starts: 1,
+    onChange: function(formatted, dates) {
+      $('#start_date').text(formatted);
+      $('#start_date').DatePickerHide();
+    }
+  });
+
+  addPicker('#start_date');
+  addPicker('#end_date');
+
+  d3.select('#slider')
+    .style("width", width + "px")
+    .style("margin", "0px auto")
+    .call(d3.slider()
+      .axis(true)
+      .min(initialvalues[0])
+      .max(initialvalues[1])
+      .value(initialvalues)
+      .on("slide", updateSliderValues));
+
+  updateSliderValues(null, initialvalues);
+
+  // Play-related variables
+  currentPlayPoint = initialvalues[0];
+  currentPlayLimit = initialvalues[1];
+  isPlaying = false;
+  playTickRepeatTimeout;
+
+  setup(width, height);
+
+  d3.json("data/world-topo-min.json", function(error, world) {
+    var countries = topojson.feature(world, world.objects.countries).features;
+    topo = countries;
+    drawMap(topo);
+    drawLaunchSites();
+    drawLaunchEvents();
+  });
+}
+
+function addPicker(selector) {
+  $(selector).DatePicker({
+    format: 'm/d/Y',
+    date: $(selector).text().trim(),
+    current: $(selector).text().trim(),
+    starts: 1,
+    onChange: function(formatted, dates) {
+      $(selector).text(formatted);
+      $(selector).DatePickerHide();
+    }
+  });
+}
+
 function setup(width,height){
   tooltip = d3.select("#container").append("div").attr("class", "tooltip hidden");
 
@@ -80,14 +133,6 @@ function setup(width,height){
 
   g = svg.append("g");
 }
-
-d3.json("data/world-topo-min.json", function(error, world) {
-  var countries = topojson.feature(world, world.objects.countries).features;
-  topo = countries;
-  drawMap(topo);
-  drawLaunchSites();
-  drawLaunchEvents();
-});
 
 function drawMap(topo) {
   var country = g.selectAll(".country").data(topo);
@@ -210,21 +255,9 @@ function addpoint(lat,lon,text,cls) {
 
 var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 var initialvalues = [1957.7, 2015.2];
-d3.select('#slider')
-  .style("width", width + "px")
-  .style("margin", "0px auto")
-  .call(d3.slider()
-    .axis(true)
-    .min(initialvalues[0])
-    .max(initialvalues[1])
-    .value(initialvalues)
-    .on("slide", updateSliderValues));
-
-updateSliderValues(null, initialvalues);
-
 // Play-related variables
-var currentPlayPoint = initialvalues[0];
-var currentPlayLimit = initialvalues[1];
+var currentPlayPoint = 0;
+var currentPlayLimit = 0;
 var isPlaying = false;
 var playTickRepeatTimeout;
 
