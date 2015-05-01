@@ -287,52 +287,109 @@ return function module() {
 
   // Move slider handle on click/drag
   function moveHandle(newValue) {
-    var currentValue = toType(value) == "array"  && value.length == 2 ? value[active - 1]: value,
-        oldPos = formatPercent(scale(stepValue(currentValue))),
-        newPos = formatPercent(scale(stepValue(newValue))),
-        position = (orientation === "horizontal") ? "left" : "bottom";
-    if (oldPos !== newPos) {
+    if(toType(newValue) === 'array' && newValue.length == 2) {
+      var changeValue = newValue;
 
-      if (toType(value) == "array" && value.length == 2) {
-        value[ active - 1 ] = newValue;
-        if (d3.event) {
-          dispatch.slide(d3.event, value );
-        };
-      } else {
-        if (d3.event) {
-          dispatch.slide(d3.event.sourceEvent || d3.event, value = newValue);
-        };
+      for(var i=0;i<changeValue.length;i++) {
+        var currentValue = toType(value) == "array"  && value.length == 2 ? value[i]: value;
+        var oldPos = formatPercent(scale(stepValue(currentValue)));
+        var newPos = formatPercent(scale(stepValue(changeValue[i])));
+        var position = (orientation === "horizontal") ? "left" : "bottom";
+        if (oldPos !== newPos) {
+
+          if (toType(value) == "array" && value.length == 2) {
+            value[ i ] = changeValue[i];
+            if (d3.event) {
+              dispatch.slide(d3.event, value );
+            };
+          } else {
+            if (d3.event) {
+              dispatch.slide(d3.event.sourceEvent || d3.event, value = changeValue[i]);
+            };
+          }
+
+          if ( toType(value) === 'array' && value.length > 1 && value[ 0 ] >= value[ 1 ] ) return;
+          if ( i == 0 ) {
+            if (toType(value) == "array" && value.length == 2) {
+              (position === "left") ? divRange.style("left", newPos) : divRange.style("bottom", newPos);
+            }
+
+            if (animate) {
+              handle1.transition()
+                  .styleTween(position, createInterpolator(oldPos, newPos))
+                  .duration((typeof animate === "number") ? animate : 250);
+            } else {
+              handle1.style(position, newPos);
+            }
+          } else {
+            
+            var width = 100 - parseFloat(newPos);
+            var top = 100 - parseFloat(newPos);
+
+            (position === "left") ? divRange.style("right", width + "%") : divRange.style("top", top + "%");
+            
+            if (animate) {
+              handle2.transition()
+                  .styleTween(position, createInterpolator(oldPos, newPos))
+                  .duration((typeof animate === "number") ? animate : 250);
+            } else {
+              handle2.style(position, newPos);
+            }
+          }
+        }
       }
+    } else {
+      var currentValue = toType(value) == "array"  && value.length == 2 ? value[active - 1]: value;
+      var oldPos = formatPercent(scale(stepValue(currentValue)));
+      var newPos = formatPercent(scale(stepValue(newValue)));
+      var position = (orientation === "horizontal") ? "left" : "bottom";
+      if (oldPos !== newPos) {
 
-      if ( value[ 0 ] >= value[ 1 ] ) return;
-      if ( active === 1 ) {
         if (toType(value) == "array" && value.length == 2) {
-          (position === "left") ? divRange.style("left", newPos) : divRange.style("bottom", newPos);
+          value[ active - 1 ] = newValue;
+          if (d3.event) {
+            dispatch.slide(d3.event, value );
+          };
+        } else {
+          if (d3.event) {
+            dispatch.slide(d3.event.sourceEvent || d3.event, value = newValue);
+          };
         }
 
-        if (animate) {
-          handle1.transition()
-              .styleTween(position, function() { return d3.interpolate(oldPos, newPos); })
-              .duration((typeof animate === "number") ? animate : 250);
-        } else {
-          handle1.style(position, newPos);
-        }
-      } else {
-        
-        var width = 100 - parseFloat(newPos);
-        var top = 100 - parseFloat(newPos);
+        if ( value[ 0 ] >= value[ 1 ] ) return;
+        if ( active === 1 ) {
+          if (toType(value) == "array" && value.length == 2) {
+            (position === "left") ? divRange.style("left", newPos) : divRange.style("bottom", newPos);
+          }
 
-        (position === "left") ? divRange.style("right", width + "%") : divRange.style("top", top + "%");
-        
-        if (animate) {
-          handle2.transition()
-              .styleTween(position, function() { return d3.interpolate(oldPos, newPos); })
-              .duration((typeof animate === "number") ? animate : 250);
+          if (animate) {
+            handle1.transition()
+                .styleTween(position, createInterpolator(oldPos, newPos))
+                .duration((typeof animate === "number") ? animate : 250);
+          } else {
+            handle1.style(position, newPos);
+          }
         } else {
-          handle2.style(position, newPos);
+          
+          var width = 100 - parseFloat(newPos);
+          var top = 100 - parseFloat(newPos);
+
+          (position === "left") ? divRange.style("right", width + "%") : divRange.style("top", top + "%");
+          
+          if (animate) {
+            handle2.transition()
+                .styleTween(position, createInterpolator(oldPos, newPos))
+                .duration((typeof animate === "number") ? animate : 250);
+          } else {
+            handle2.style(position, newPos);
+          }
         }
       }
     }
+  }
+
+  function createInterpolator(oldPos, newPos) {
+    return function() { return d3.interpolate(oldPos, newPos); }
   }
 
   // Calculate nearest step value
@@ -343,16 +400,31 @@ return function module() {
     }
 
     var alignValue = val;
-    if (snap) {
-      alignValue = nearestTick(scale(val));
-    } else{
-      var valModStep = (val - scale.domain()[0]) % step;
-      alignValue = val - valModStep;
+    if (toType(val) == "array" && val.length == 2) {
+      if (snap) {
+        alignValue = [nearestTick(scale(val[0])), nearestTick(scale(val[1]))];
+      } else {
+        for(var i=0;i<2;i++) {
+          var valModStep = (val[i] - scale.domain()[0]) % step;
+          alignValue[i] = val[i] - valModStep;
 
-      if (Math.abs(valModStep) * 2 >= step) {
-        alignValue += (valModStep > 0) ? step : -step;
-      }
-    };
+          if (Math.abs(valModStep) * 2 >= step) {
+            alignValue[i] += (valModStep > 0) ? step : -step;
+          }
+        }
+      };
+    } else {
+      if (snap) {
+        alignValue = nearestTick(scale(val));
+      } else {
+        var valModStep = (val - scale.domain()[0]) % step;
+        alignValue = val - valModStep;
+
+        if (Math.abs(valModStep) * 2 >= step) {
+          alignValue += (valModStep > 0) ? step : -step;
+        }
+      };
+    }
 
     return alignValue;
 

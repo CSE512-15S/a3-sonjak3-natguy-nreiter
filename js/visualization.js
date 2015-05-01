@@ -36,35 +36,26 @@ var height = 0;
 
 var topo,projection,path,svg,g;
 
-var tooltip;
+var tooltip, time_slider;
 
 function initialSetup() {
   width = document.getElementById('container').offsetWidth;
   height = width / 2;
 
-  $('#start_date').DatePicker({
-    format: 'm/d/Y',
-    date: $('#start_date').text().trim(),
-    current: $('#start_date').text().trim(),
-    starts: 1,
-    onChange: function(formatted, dates) {
-      $('#start_date').text(formatted);
-      $('#start_date').DatePickerHide();
-    }
-  });
-
-  addPicker('#start_date');
+  addPicker('#start_date', startDateHandler);
   addPicker('#end_date');
+
+  time_slider = d3.slider()
+    .axis(true)
+    .min(initialvalues[0])
+    .max(initialvalues[1])
+    .value(initialvalues)
+    .on("slide", updateSliderValues)
 
   d3.select('#slider')
     .style("width", width + "px")
     .style("margin", "0px auto")
-    .call(d3.slider()
-      .axis(true)
-      .min(initialvalues[0])
-      .max(initialvalues[1])
-      .value(initialvalues)
-      .on("slide", updateSliderValues));
+    .call(time_slider);
 
   updateSliderValues(null, initialvalues);
 
@@ -85,17 +76,37 @@ function initialSetup() {
   });
 }
 
-function addPicker(selector) {
+function addPicker(selector, change_handler) {
   $(selector).DatePicker({
     format: 'm/d/Y',
     date: $(selector).text().trim(),
     current: $(selector).text().trim(),
     starts: 1,
     onChange: function(formatted, dates) {
+      if($(selector).text().trim() != formatted) {
+        $(selector).DatePickerHide();
+        updateSliderFromPickers();
+      }
+
       $(selector).text(formatted);
-      $(selector).DatePickerHide();
+
+      if(change_handler) {
+        change_handler();
+      }
     }
   });
+}
+
+function updateSliderFromPickers() {
+  var min_date = $('#start_date').DatePickerGetDate();
+  var max_date = $('#end_date').DatePickerGetDate();
+
+  var min_val = convertDateToDecimal(min_date);
+  var max_val = convertDateToDecimal(max_date);
+
+  updateSliderValues(null, [min_val, max_val]);
+
+  time_slider.value([min_val, max_val]);
 }
 
 function setup(width,height){
@@ -273,6 +284,25 @@ function updateSliderValues(evt, value) {
   var maxdate = convertDecimalDate(value[1]);
   d3.select("#slidermin").text(months[mindate.getMonth()] + " " + mindate.getFullYear());
   d3.select("#slidermax").text(months[maxdate.getMonth()] + " " + maxdate.getFullYear());
+
+  $('#start_date').DatePickerSetDate(mindate, true);
+  $('#end_date').DatePickerSetDate(maxdate, true);
+
+  $('#start_date').text(
+    ('0' + (mindate.getMonth() + 1)).slice(-2) +
+    "/" +
+    ('0' + mindate.getDate()).slice(-2) +
+    "/" +
+    mindate.getFullYear()
+  );
+
+  $('#end_date').text(
+    ('0' + (maxdate.getMonth() + 1)).slice(-2) +
+    "/" +
+    ('0' + maxdate.getDate()).slice(-2) +
+    "/" +
+    maxdate.getFullYear()
+  );
 }
 
 function leapYear(year) {
@@ -286,6 +316,18 @@ function convertDecimalDate(decimalDate) {
   var milliseconds = remainder * daysPerYear * 24 * 60 * 60 * 1000;
   var yearDate = new Date(year, 0, 1);
   return new Date(yearDate.getTime() + milliseconds);
+}
+
+function convertDateToDecimal(date) {
+  var year = date.getFullYear();
+
+  var ms = date.getTime() - (new Date(year, 0, 1)).getTime();
+
+  var num_days = (leapYear(year)) ? 366 : 365;
+
+  var ms_in_year = num_days * 24 * 60 * 60 * 1000;
+
+  return year + (ms * 1.0 / ms_in_year);
 }
 
 // This loads the launch data from 'massive_launchlog' into
@@ -386,4 +428,10 @@ function playTick(interval)
     // This function will be called again in {interval} ms
     playTickRepeatTimeout = setTimeout(playTick, interval, interval);
   }
+}
+
+function startDateHandler() {
+  var start_date = $('#start_date').DatePickerGetDate();
+
+  displayDate(start_date.getFullYear(), start_date.getMonth(), start_date.getDate());
 }
