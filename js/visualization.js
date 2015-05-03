@@ -114,6 +114,74 @@ function updateSliderFromPickers() {
   time_slider.value([min_val, max_val]);
 }
 
+// Uses list of current tags to generate colored hashmarks to indicate events
+// (Iterates through all entries, which may take a while)
+function drawHashmarks()
+{
+  // Only want to attempt to do this if there are actually tags set
+  if (currentTags.length > 0)
+  {
+    for (var year in launchData)
+    {
+      for (var month in launchData[year])
+      {
+        for (var day in launchData[year][month])
+        {
+          entries = launchData[year][month][day];
+          for (var entryNo = 0; entryNo < entries.length; entryNo++)
+          {
+            entry = entries[entryNo];
+            // Draw hashmark if we have a tag match
+            for (var tagNo = 0; tagNo < currentTags.length; tagNo++)
+            {
+              if (currentTags[tagNo] === entry['Tag'])
+              {
+                drawHashmarkAtDate(year, month, day, currentTags[tagNo]);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+function drawHashmarkAtDate(year, month, day, tag)
+{
+  // Get color for hashmark
+  var color = getHashmarkColor(tag);
+
+  // Find location to put hashmark
+  var pixelWidth = parseInt(d3.select("#slider").style("width"));
+  var range = initialvalues[1] - initialvalues[0];
+
+  var decimalDate = convertDateToDecimal(new Date(year, month, day));
+  var progress = (decimalDate - initialvalues[0]) / range;
+  var xPos = progress * pixelWidth - 10.0;  
+
+  // Draw a line above the slider at this date
+  var svg = d3.select("#slider").append("svg")
+  .attr("id", "hashmark")
+  .attr("height", "10px")
+  .attr("width", "1px")
+  .style("position", "absolute")
+  .style("top", "-13px")
+  .style("left", xPos);
+      
+  var hashmark = svg.append("line")
+    .attr("x1", 0)
+    .attr("x2", 0)
+    .attr("y1", "0")
+    .attr("y2", "10")
+    .style("stroke", color)
+    .style("stroke-width", 1);
+}
+
+function getHashmarkColor(tag)
+{
+  return 'green';
+}
+
 function setup(width,height){
   tooltip = d3.select("#container").append("div").attr("class", "tooltip hidden");
 
