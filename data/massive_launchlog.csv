@@ -1,4 +1,4 @@
-Launch Date and Time (UTC),Launch Site (Abbrv.),Launch Site (Full),Latitude,Longitude,Launch Vehicle,Success,Official Payload Name,Manufacturer's Payload Name,COSPAR,Launch Designator ,SATCAT ID,SATCAT ID w/o success code or leading zeros,LV S/N,Site,Ref,International Designator,Tags,
+Launch Date and Time (UTC),Launch Site (Abbrv.),Launch Site (Full),Latitude,Longitude,Launch Vehicle,Success,Official Payload Name,Manufacturer's Payload Name,COSPAR,Launch Designator ,SATCAT ID,SATCAT ID w/o success code or leading zeros,LV S/N,Site,Ref,International Designator,Tag,
 1957 Dec 6 1644:35,AFETR,"Kennedy Space Center, USA",28.391139,-80.588343,Vanguard,F,Vanguard,Vanguard Test Satellite,1957-F01,1957-F01,F00002,2,TV-3,CC       LC18A,Vang-ER9948,1957-001B,,
 1957 Nov 3 0230:42,TYMSC,"Baikonur Cosmodrome, Kazakhstan",45.6,63.4,Sputnik 8K71PS,S,2-y ISZ,PS-2,1957 BET 1,1957 BET,S00003,3,M1-2PS,NIIP-5   LC1,Grahn-WWW,1957-002A,,
 1957 Oct 4 1928:34,TYMSC,"Baikonur Cosmodrome, Kazakhstan",45.6,63.4,Sputnik 8K71PS,S,1-y ISZ,PS-1,1957 ALP 2,1957 ALP,S00002,2,M1-PS,NIIP-5   LC1,Energiya,1957-001B,,
