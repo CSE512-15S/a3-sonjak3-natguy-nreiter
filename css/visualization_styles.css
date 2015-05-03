@@ -36,11 +36,11 @@ div.tooltip {
 }
 
 .launch_success {
-  fill: #00FF00;
+  fill: #4CFF3F;
 }
 
 .launch_failure {
-  fill: #FF0000;
+  fill: #FF2A46;
 }
 
 #date_selectors {
