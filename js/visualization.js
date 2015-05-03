@@ -555,20 +555,17 @@ function displayDate(year, month, day) {
 }
 
 // Starts playing a sequence of launches at a specified interval
-function play(interval)
+function play()
 {
-  // Default value of 10 ms if not specified
-  interval = typeof interval !== 'undefined' ? interval : 10;      
-
   isPlaying = true;
-  playTick(interval);
+  playTick();
 }
 
 
 // Plays the sequence of all launches starting at the left slider position
 // and ending at the right slider position. This function will loop
 // indefinitely, until the right slider position is reached
-function playTick(interval)
+function playTick()
 {
   // Stop playing if we're at the right slider position
   if (currentPlayPoint >= currentPlayLimit)
@@ -585,8 +582,8 @@ function playTick(interval)
     // Update displayed launches
     displayDate(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
 		updatePlayBar();
-    // This function will be called again in {interval} ms
-    playTickRepeatTimeout = setTimeout(playTick, interval, interval);
+    // This function will be called again in {playSpeed} ms
+    playTickRepeatTimeout = setTimeout(playTick, playSpeed);
   }
 }
 
