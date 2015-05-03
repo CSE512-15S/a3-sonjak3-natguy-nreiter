@@ -187,19 +187,14 @@ function redraw() {
   setup(width,height);
   drawMap(topo);
   drawLaunchSites();
-  //drawLaunchEvents();
 }
 
 function redrawLaunchesOnly()
 {
-  // Remove map points
-  //d3.selectAll("g[class='gpoint']").remove();
-
-  // Redraw launch sites
-  drawLaunchSites();
-
   // Redraw launch events
   drawLaunchEvents();
+
+	// Don't redraw launch sites because everything will be sad  
 }
 
 function move() {
@@ -447,7 +442,7 @@ function playTick(interval)
 
     // Update displayed launches
     displayDate(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
-
+		updatePlayBar();
     // This function will be called again in {interval} ms
     playTickRepeatTimeout = setTimeout(playTick, interval, interval);
   }
