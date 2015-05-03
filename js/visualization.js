@@ -136,7 +136,9 @@ function drawHashmarks()
             {
               if (currentTags[tagNo] === entry['Tag'])
               {
-                drawHashmarkAtDate(year, month, day, currentTags[tagNo]);
+                // Get whether the launch succeeded or not
+                success = entry['Success'];
+                drawHashmarkAtDate(year, month, day, currentTags[tagNo], success);
               }
             }
           }
@@ -146,10 +148,10 @@ function drawHashmarks()
   }
 }
 
-function drawHashmarkAtDate(year, month, day, tag)
+function drawHashmarkAtDate(year, month, day, tag, success)
 {
   // Get color for hashmark
-  var color = getHashmarkColor(tag);
+  var color = getHashmarkColor(tag, success);
 
   // Find location to put hashmark
   var pixelWidth = parseInt(d3.select("#slider").style("width"));
@@ -162,24 +164,31 @@ function drawHashmarkAtDate(year, month, day, tag)
   // Draw a line above the slider at this date
   var svg = d3.select("#slider").append("svg")
   .attr("id", "hashmark")
-  .attr("height", "10px")
+  .attr("height", "20px")
   .attr("width", "1px")
   .style("position", "absolute")
-  .style("top", "-13px")
+  .style("top", "-22px")
   .style("left", xPos);
       
   var hashmark = svg.append("line")
     .attr("x1", 0)
     .attr("x2", 0)
     .attr("y1", "0")
-    .attr("y2", "10")
+    .attr("y2", "20")
     .style("stroke", color)
     .style("stroke-width", 1);
 }
 
-function getHashmarkColor(tag)
+function getHashmarkColor(tag, success)
 {
-  return 'green';
+  if (success === 'S')
+  {
+    return 'green';
+  }
+  else
+  {
+    return 'red';
+  }
 }
 
 function setup(width,height){
