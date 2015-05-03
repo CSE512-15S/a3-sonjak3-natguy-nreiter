@@ -47,9 +47,9 @@ function initialSetup() {
 
   time_slider = d3.slider()
     .axis(true)
-    .min(initialvalues[0])
-    .max(initialvalues[1])
-    .value(initialvalues)
+    .min(slidervalues[0])
+    .max(slidervalues[1])
+    .value(slidervalues)
     .on("slide", updateSliderValues)
 
   d3.select('#slider')
@@ -57,11 +57,11 @@ function initialSetup() {
     .style("margin", "0px auto")
     .call(time_slider);
 
-  updateSliderValues(null, initialvalues);
+  updateSliderValues(null, slidervalues);
 
   // Play-related variables
-  currentPlayPoint = initialvalues[0];
-  currentPlayLimit = initialvalues[1];
+  currentPlayPoint = slidervalues[0];
+  currentPlayLimit = slidervalues[1];
   isPlaying = false;
   playTickRepeatTimeout;
 
@@ -74,6 +74,8 @@ function initialSetup() {
     drawLaunchSites();
     drawLaunchEvents();
   });
+
+  playBar();
 }
 
 function addPicker(selector, change_handler) {
@@ -266,22 +268,23 @@ function addpoint(lat,lon,text,cls) {
 
 var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 var initialvalues = [1957.7, 2015.2];
+var slidervalues = initialvalues.slice();
 // Play-related variables
 var currentPlayPoint = 0;
 var currentPlayLimit = 0;
 var isPlaying = false;
 var playTickRepeatTimeout;
 
-// value = [ mindate, maxdate ] in decimal form
-function updateSliderValues(evt, value) {
+// values = [ mindate, maxdate ] in decimal form
+function updateSliderValues(evt, values) {
   // Cut all playback and update values for next play request
   clearTimeout(playTickRepeatTimeout);
   isPlaying = false;
-  currentPlayPoint = value[0];
-  currentPlayLimit = value[1];
+  currentPlayPoint = values[0];
+  currentPlayLimit = values[1];
 
-  var mindate = convertDecimalDate(value[0]);
-  var maxdate = convertDecimalDate(value[1]);
+  var mindate = convertDecimalDate(values[0]);
+  var maxdate = convertDecimalDate(values[1]);
   d3.select("#slidermin").text(months[mindate.getMonth()] + " " + mindate.getFullYear());
   d3.select("#slidermax").text(months[maxdate.getMonth()] + " " + maxdate.getFullYear());
 
@@ -303,6 +306,8 @@ function updateSliderValues(evt, value) {
     "/" +
     maxdate.getFullYear()
   );
+
+  updatePlayBar();
 }
 
 function leapYear(year) {
@@ -392,6 +397,7 @@ function displayDate(year, month, day) {
     );
   }
 
+  updatePlayBar();
   redrawLaunchesOnly();
 }
 
@@ -428,6 +434,29 @@ function playTick(interval)
     // This function will be called again in {interval} ms
     playTickRepeatTimeout = setTimeout(playTick, interval, interval);
   }
+}
+
+function playBar() {
+  var svg = d3.select("#slider").append("svg")
+    .attr("id", "playBar")
+    .attr("height", "50px")
+    .attr("width", "20px")
+    .style("position", "absolute")
+    .style("top", "-18px")
+    .style("left", "-10px");
+        
+  var rect = svg.append("rect")
+    .attr("height", "50px")
+    .attr("width", "20px")
+    .attr("fill", "red");
+}
+
+function updatePlayBar() {
+  var pixelWidth = parseInt(d3.select("#slider").style("width"));
+  var range = initialvalues[1] - initialvalues[0];
+  var progress = (currentPlayPoint - initialvalues[0]) / range;
+  var left = progress * pixelWidth - 10.0;
+  d3.select("#playBar").style("left", Math.floor(left) + "px"); 
 }
 
 function startDateHandler() {
