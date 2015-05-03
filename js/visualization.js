@@ -165,7 +165,7 @@ function drawLaunchSites()
   var site;
   for(var i=0;i<launch_sites.length;i++) {
     site = launch_sites[i];
-    addpoint(site.Longitude, site.Latitude, site.FullName, 'launch_site');
+    addLaunchSite(site.Longitude, site.Latitude, site.FullName);
   }
 }
 
@@ -176,7 +176,7 @@ function drawLaunchEvents()
   for(var i=0;i<current_launches.length;i++) {
     info = current_launches[i].info;
     cls = (info.Success == 'S') ? 'launch_success' : 'launch_failure';
-    addpoint(info.Longitude, info.Latitude, info["Launch Vehicle"], cls);
+    addLaunchEvent(info.Longitude, info.Latitude, info["Launch Vehicle"], cls);
   }
 }      
 
@@ -187,13 +187,13 @@ function redraw() {
   setup(width,height);
   drawMap(topo);
   drawLaunchSites();
-  drawLaunchEvents();
+  //drawLaunchEvents();
 }
 
 function redrawLaunchesOnly()
 {
   // Remove map points
-  d3.selectAll("g[class='gpoint']").remove();
+  //d3.selectAll("g[class='gpoint']").remove();
 
   // Redraw launch sites
   drawLaunchSites();
@@ -236,8 +236,25 @@ function click() {
   // console.log(latlon);
 }
 
-// add points and text to the map
-function addpoint(lat,lon,text,cls) {
+
+function addLaunchEvent(lat,lon,text,cls) {
+  var x = projection([lat,lon])[0];
+  var y = projection([lat,lon])[1];
+
+  var circle = g.append("svg:circle")
+        .attr("cx", x)
+        .attr("cy", y)
+        .attr("class","point " + cls)
+        .attr("r", 15);
+
+  circle.transition()
+    .duration(1000)
+    .attr("r", 100)
+    .style("opacity", "0.0")
+		.remove();
+}
+
+function addLaunchSite(lat,lon,text) {
   //offsets for tooltips
   var offsetL = document.getElementById('container').offsetLeft+20;
   var offsetT = document.getElementById('container').offsetTop+10;
@@ -249,8 +266,8 @@ function addpoint(lat,lon,text,cls) {
   gpoint.append("svg:circle")
         .attr("cx", x)
         .attr("cy", y)
-        .attr("class","point " + cls)
-        .attr("r", 3);
+        .attr("r", 3)
+        .style("fill", "#04CCFF");
 
   gpoint
     .on("mousemove", function(d,i) {
@@ -263,7 +280,7 @@ function addpoint(lat,lon,text,cls) {
       })
       .on("mouseout",  function(d,i) {
         tooltip.classed("hidden", true);
-      }); 
+      });
 }
 
 var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
