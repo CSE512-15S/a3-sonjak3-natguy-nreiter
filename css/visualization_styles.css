@@ -3,27 +3,38 @@ body {
   color: #fff;
   font-family: 'Titillium Web', sans-serif;
 }
+
 circle {
   fill: #04CCFF;
 }
+
 .country {
   stroke: #000;
   stroke-width: 0.1px;
 }
+
 .text {
   font-size:10px;
   text-transform:capitalize;
 }
+
 #container {
   margin:10px 10%;
   height:100%;
 }
+
+#sliderContainer {
+  height: 60px;
+}
+
 #map {
   border: 2px solid #606060;
 }
+
 .hidden { 
   display: none; 
 }
+
 div.tooltip {
   color: #222; 
   background: #fff; 
@@ -74,4 +85,78 @@ div.tooltip {
 
 .datepicker {
   z-index: 200;
+}
+
+/* Speed picker */
+
+.wrapper {
+  margin: 100px 0;
+}
+.toggle_radio{
+  position: relative;
+  background: rgba(255,255,255,.1);
+  margin: 4px auto;
+  overflow: hidden;
+  padding: 0 !important;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  position: relative;
+  height: 30px;
+  width: 258px;
+}
+.toggle_radio > * {
+  float: left;
+}
+.toggle_radio input[type=radio]{
+  display: none;
+  /*position: fixed;*/
+}
+.toggle_radio label{
+  color: rgba(255,255,255,.9);
+  z-index: 0;
+  display: block;
+  width: 80px;
+  height: 24px;
+  margin: 3px 3px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 1;
+  /*background: rgba(0,0,0,.1);*/
+  text-align: center;
+  /*background: blue;*/ /*make it blue*/
+}
+
+.toggle_radio p {
+  margin: 0px;
+}
+.toggle_option_slider{
+  /*display: none;*/
+  width: 80px;
+  height: 24px;
+  position: absolute;
+  top: 3px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-transition: all .4s ease;
+  -moz-transition: all .4s ease;
+  -o-transition: all .4s ease;
+  -ms-transition: all .4s ease;
+  transition: all .4s ease;
+}
+
+#slow:checked ~ .toggle_option_slider{
+  background: rgba(255,255,255,.3);
+  left: 3px;
+}
+#medium:checked ~ .toggle_option_slider{
+  background: rgba(255,255,255,.3);
+  left: 89px;
+}
+#fast:checked ~ .toggle_option_slider{
+  background: rgba(255,255,255,.3);
+  left: 175px;
 }

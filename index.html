@@ -34,8 +34,23 @@
         </span>
       </div>
     </div>
-    <div id="slider"></div>
-    <br>
-    <div id="slidermin"></div><div id="slidermax"></div>
+    <div id="sliderContainer">
+      <div id="slider"></div>
+    </div>
+    <div id="playControls">
+      <button id="playButton">Play</button>
+      <button id="pauseButton">Pause</button>
+      <div class="wrapper">
+        <div class="toggle_radio">
+          <input type="radio" class="toggle_option" id="slow" name="toggle_option">
+          <input type="radio" checked class="toggle_option" id="medium" name="toggle_option">
+          <input type="radio" class="toggle_option" id="fast" name="toggle_option">
+          <label for="slow"><p>Slow</p></label>
+          <label for="medium"><p>Medium</p></label>
+          <label for="fast"><p>Fast</p></label>
+          <div class="toggle_option_slider"></div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

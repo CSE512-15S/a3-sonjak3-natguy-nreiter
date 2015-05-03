@@ -40,6 +40,8 @@ var height = 0;
 var topo,projection,path,svg,g;
 
 var tooltip, time_slider;
+var playSpeed = 300;
+const playBarWidth = 4;
 
 function initialSetup() {
   width = document.getElementById('container').offsetWidth;
@@ -78,7 +80,34 @@ function initialSetup() {
     drawLaunchEvents();
   });
 
-  playBar();
+  setupPlayControls();
+  drawPlayBar();
+
+
+}
+
+function setupPlayControls() {
+  $("#slow").on("click", function() {
+    playSpeed = 300;
+  });
+  $("#medium").on("click", function() { 
+    playSpeed = 100;
+  });
+  $("#fast").on("click", function() {
+    playSpeed = 10;
+  });
+  $('#playButton').on("click", function() {
+    if (!isPlaying) {
+      play(playSpeed);
+    }
+  });
+
+  $('#pauseButton').on("click", function() {
+    if (isPlaying) {
+      clearTimeout(playTickRepeatTimeout);
+      isPlaying = false;
+    }
+  });
 }
 
 function addPicker(selector, change_handler) {
@@ -363,7 +392,6 @@ function addLaunchSite(lat,lon,text) {
       tooltip.classed("hidden", false)
              .attr("style", "left:"+(mouse[0]+offsetL)+"px;top:"+(mouse[1]+offsetT)+"px")
              .html(text);
-
       })
       .on("mouseout",  function(d,i) {
         tooltip.classed("hidden", true);
@@ -389,8 +417,6 @@ function updateSliderValues(evt, values) {
 
   var mindate = convertDecimalDate(values[0]);
   var maxdate = convertDecimalDate(values[1]);
-  d3.select("#slidermin").text(months[mindate.getMonth()] + " " + mindate.getFullYear());
-  d3.select("#slidermax").text(months[maxdate.getMonth()] + " " + maxdate.getFullYear());
 
   $('#start_date').DatePickerSetDate(mindate, true);
   $('#end_date').DatePickerSetDate(maxdate, true);
@@ -533,6 +559,7 @@ function play(interval)
   playTick(interval);
 }
 
+
 // Plays the sequence of all launches starting at the left slider position
 // and ending at the right slider position. This function will loop
 // indefinitely, until the right slider position is reached
@@ -558,26 +585,27 @@ function playTick(interval)
   }
 }
 
-function playBar() {
+function drawPlayBar() {
   var svg = d3.select("#slider").append("svg")
     .attr("id", "playBar")
     .attr("height", "50px")
-    .attr("width", "20px")
+    .attr("width", playBarWidth + "px")
     .style("position", "absolute")
     .style("top", "-18px")
-    .style("left", "-10px");
+    .style("left", "-" + playBarWidth/2 + "px");
         
   var rect = svg.append("rect")
+    .attr("id", "playBarRect")
     .attr("height", "50px")
-    .attr("width", "20px")
-    .attr("fill", "red");
+    .attr("width", playBarWidth + "px")
+    .attr("fill", "black");
 }
 
 function updatePlayBar() {
   var pixelWidth = parseInt(d3.select("#slider").style("width"));
   var range = initialvalues[1] - initialvalues[0];
   var progress = (currentPlayPoint - initialvalues[0]) / range;
-  var left = progress * pixelWidth - 10.0;
+  var left = progress * pixelWidth - playBarWidth / 2;
   d3.select("#playBar").style("left", Math.floor(left) + "px"); 
 }
 
