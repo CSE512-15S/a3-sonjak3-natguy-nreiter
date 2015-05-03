@@ -127,6 +127,11 @@ function addPicker(selector, change_handler) {
       if(change_handler) {
         change_handler();
       }
+    },
+    onRender: function(date) {
+      return {
+        disabled: (date < new Date(1957, 8, 13) || date >= new Date(2015, 2, 16))
+      }
     }
   });
 }

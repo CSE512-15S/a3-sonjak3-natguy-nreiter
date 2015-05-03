@@ -11,7 +11,7 @@ div.datepicker {
 	display: none;
 }
 .datepickerContainer {
-	background: #121212;
+	background: #242424;
 	position: absolute;
 	top: 10px;
 	left: 10px;
@@ -125,7 +125,16 @@ td.datepickerNotInMonth a {
 	color: #666;
 }
 tbody.datepickerDays td.datepickerSelected{
-	background: #136A9F;
+  background: #04CCFF;
+}
+tbody.datepickerDays td.datepickerSelected a,
+tbody.datepickerDays td.datepickerSelected a:link,
+tbody.datepickerDays td.datepickerSelected a:visited {
+  color: #242424;
+}
+tbody.datepickerDays td.datepickerSelected a:hover,
+tbody.datepickerDays td.datepickerSelected a:active {
+  color: #555;
 }
 tbody.datepickerDays td.datepickerNotInMonth.datepickerSelected {
 	background: #17384d;
@@ -136,7 +145,7 @@ tbody.datepickerMonths td.datepickerSelected{
 }
 div.datepicker a:hover,
 div.datepicker a:hover {
-	color: #88c5eb;
+  color: #04CCFF;
 }
 div.datepicker td.datepickerNotInMonth a:hover {
 	color: #999;
