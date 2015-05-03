@@ -308,9 +308,7 @@ function throttle() {
 //geo translation on mouse click in map
 function click() {
   var latlon = projection.invert(d3.mouse(this));
-  // console.log(latlon);
 }
-
 
 function addLaunchEvent(lat,lon,text,cls) {
   var x = projection([lat,lon])[0];
@@ -337,7 +335,21 @@ function addLaunchSite(lat,lon,text) {
   var gpoint = g.append("g").attr("class", "gpoint");
   var x = projection([lat,lon])[0];
   var y = projection([lat,lon])[1];
-
+  var ix = x;
+  var iy = y;
+  // these are special cased because the launch sites overlap
+  // on the map.
+  if (text.startsWith('Tanegashima')) {
+    iy += 10;
+  } else if (text.startsWith('Uchinoura')){
+    iy -= 10;
+    ix += 5;
+  }
+  var interactionArea = gpoint.append("svg:circle")
+    .attr("cx", ix)
+    .attr("cy", iy)
+    .attr("r", 10)
+    .style("fill", "rgba(0,0,0,0)"); // change opacity to 1 to see the interaction area
   gpoint.append("svg:circle")
         .attr("cx", x)
         .attr("cy", y)
