@@ -23,13 +23,16 @@ var month_map = {
   'Dec': 12
 };
 
-var launch_data = {};// [year][month][day]=> [array of entries]
+var launchData = {};// [year][month][day]=> [array of entries]
 loadLaunchData();
 
 var launch_sites = [];// Stores launch sites
 loadLaunchSites();
 
-var current_launches = []; // Stores current launches to display
+var currentLaunches = []; // Stores current launches to display
+
+// Stores tags currently in use (for filtering)
+var currentTags = [];
 
 var width = 0;
 var height = 0;
@@ -173,8 +176,8 @@ function drawLaunchEvents()
 {
   // Could remove old launches here
   var info;
-  for(var i=0;i<current_launches.length;i++) {
-    info = current_launches[i].info;
+  for(var i=0;i<currentLaunches.length;i++) {
+    info = currentLaunches[i].info;
     cls = (info.Success == 'S') ? 'launch_success' : 'launch_failure';
     addLaunchEvent(info.Longitude, info.Latitude, info["Launch Vehicle"], cls);
   }
@@ -349,7 +352,7 @@ function convertDateToDecimal(date) {
 
 // This loads the launch data from 'massive_launchlog' into
 // a data structure mapped by 'year'=>'month'=>'day'=>array of entries
-// Stored in `launch_data`
+// Stored in `launchData`
 function loadLaunchData() {
   d3.csv("data/massive_launchlog.csv", function(err, entries) {
     entries.forEach(function(entry) {
@@ -359,19 +362,19 @@ function loadLaunchData() {
       var day = date_parts[2];
 
       // Ensure data structure is set up
-      if(launch_data[year] == null) {
-        launch_data[year] = {};
+      if(launchData[year] == null) {
+        launchData[year] = {};
       }
 
-      if(launch_data[year][month] == null) {
-        launch_data[year][month] = {};
+      if(launchData[year][month] == null) {
+        launchData[year][month] = {};
       }
 
-      if(launch_data[year][month][day] == null) {
-        launch_data[year][month][day] = [];
+      if(launchData[year][month][day] == null) {
+        launchData[year][month][day] = [];
       }
 
-      launch_data[year][month][day].push(entry);
+      launchData[year][month][day].push(entry);
     });
   });
 
@@ -391,22 +394,40 @@ function loadLaunchSites() {
 function displayDate(year, month, day) {
   var entries = [];
 
-  if(launch_data[year] && launch_data[year][month] && launch_data[year][month][day]) {
-    entries = launch_data[year][month][day];
+  // Loads launches  from current day's launch data
+  if(launchData[year] && launchData[year][month] && launchData[year][month][day]) {
+    entries = launchData[year][month][day];
   }
 
   // Right now this clears the points completely
   // Later we may change it to not clear, and just allow
   // the animation to continue
-  current_launches = [];
+  currentLaunches = [];
 
-  for(var i=0;i<entries.length;i++) {
-    current_launches.push(
+  for(var i=0; i <entries.length; i++) {
+    
+    // If there are filter tags, applies the filter
+    if (currentTags.length > 0)
+    {
+      for (var tagNo = 0; tagNo < currentTags.length; tagNo++)
       {
-        birthtime: (new Date()).getTime(),
-        info: entries[i]
+        var tag = currentTags[tagNo];
+        // Add if we have a tag match
+        if (entries[i]['Tag'] === tag)
+        {
+          currentLaunches.push(
+            { birthtime: (new Date()).getTime(),
+              info: entries[i] } );
+        }
       }
-    );
+    }
+    else
+    {
+      // Just add, since we're not checking tags
+      currentLaunches.push(
+        { birthtime: (new Date()).getTime(),
+          info: entries[i] } );
+    }
   }
 
   updatePlayBar();
