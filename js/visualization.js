@@ -40,7 +40,7 @@ var height = 0;
 var topo,projection,path,svg,g;
 
 var tooltip, time_slider;
-var playSpeed = 300;
+var playSpeed = 50;
 const playBarWidth = 4;
 
 function initialSetup() {
@@ -101,10 +101,10 @@ function changeTag(evt) {
 
 function setupPlayControls() {
   $("#slow").on("click", function() {
-    playSpeed = 300;
+    playSpeed = 100;
   });
   $("#medium").on("click", function() { 
-    playSpeed = 100;
+    playSpeed = 50;
   });
   $("#fast").on("click", function() {
     playSpeed = 10;
@@ -123,13 +123,6 @@ function setupPlayControls() {
       this.style.background = "-o-linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
       this.style.background = "-moz-linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
       this.style.background = "linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
-    }
-  });
-
-  $('#pauseButton').on("click", function() {
-    if (isPlaying) {
-      clearTimeout(playTickRepeatTimeout);
-      isPlaying = false;
     }
   });
 }
@@ -454,6 +447,12 @@ function updateSliderValues(evt, values) {
   // Cut all playback and update values for next play request
   clearTimeout(playTickRepeatTimeout);
   isPlaying = false;
+  var playbutton = $('#playButton');
+  playButton.innerHTML = "Play";
+  playButton.style.background = "-webkit-linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
+  playButton.style.background = "-o-linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
+  playButton.style.background = "-moz-linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
+  playButton.style.background = "linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
   currentPlayPoint = values[0];
   currentPlayLimit = values[1];
 
