@@ -389,8 +389,8 @@ function addLaunchEvent(lat,lon,text,cls) {
 
 function addLaunchSite(lat,lon,text) {
   //offsets for tooltips
-  var offsetL = document.getElementById('container').offsetLeft+20;
-  var offsetT = document.getElementById('container').offsetTop+10;
+  var offsetL = 20;
+  var offsetT = 10;
 
   var gpoint = g.append("g").attr("class", "gpoint");
   var x = projection([lat,lon])[0];
