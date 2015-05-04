@@ -616,8 +616,8 @@ function playTick()
     currentPlayPoint += 1.0 / 365.25;
     var currentDate = convertDecimalDate(currentPlayPoint);
 
-    // Update displayed launches
-    displayDate(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+    // Update displayed launches (getMonth() returns a value from 0 to 11, so we increment it)
+    displayDate(currentDate.getFullYear(), currentDate.getMonth()+1, currentDate.getDate());
 		updatePlayBar();
     // This function will be called again in {playSpeed} ms
     playTickRepeatTimeout = setTimeout(playTick, playSpeed);
@@ -651,5 +651,6 @@ function updatePlayBar() {
 function startDateHandler() {
   var start_date = $('#start_date').DatePickerGetDate();
 
-  displayDate(start_date.getFullYear(), start_date.getMonth(), start_date.getDate());
+  // Incrementing month because getMonth() returns a value from 0 to 11
+  displayDate(start_date.getFullYear(), start_date.getMonth()+1, start_date.getDate());
 }
