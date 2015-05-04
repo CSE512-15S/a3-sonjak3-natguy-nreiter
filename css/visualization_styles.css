@@ -250,3 +250,11 @@ div.tooltip {
 #filters input {
   margin-right: 5px;
 }
+
+.description a, .description a:link, .description a:visited {
+  color: #CCC;
+}
+
+.description a:hover, .description a:active {
+  color: #888;
+}
