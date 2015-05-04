@@ -389,10 +389,14 @@ function addLaunchSite(lat,lon,text) {
     .attr("cy", iy)
     .attr("r", 10)
     .style("fill", "rgba(0,0,0,0)"); // change opacity to 1 to see the interaction area
+
   gpoint.append("svg:circle")
     .attr("cx", x)
     .attr("cy", y)
     .attr("r", 3)
+    .attr("id", "launchsite")
+    .attr("name", text)
+    .style("opacity", 0.1)
     .style("fill", "#04CCFF");
 
   gpoint
@@ -406,6 +410,104 @@ function addLaunchSite(lat,lon,text) {
       .on("mouseout",  function(d,i) {
         tooltip.classed("hidden", true);
       });
+}
+
+// Determines whether the given launch site was active by a given date
+function isLaunchSiteActive(text)
+{
+  var date = convertDecimalDate(currentPlayPoint);
+
+  switch(text)
+  {
+    case "Alcantara Space Center, Brasil":
+      establishedDate = new Date(1997, 11-1, 2);
+      return date > establishedDate;
+    case "Baikonur Cosmodrome, Kazakhstan":
+      establishedDate = new Date(1957, 11-1, 3);
+      return date > establishedDate;    
+    case "Broglio Space Centre, Kenya":
+      establishedDate = new Date(1967, 4-1, 26);
+      return date > establishedDate;
+    case "Dombarovsky Air Base, Russia":
+      establishedDate = new Date(2006, 7-1, 12);
+    case "Guiana Space Centre, French Guiana":
+      establishedDate = new Date(1970, 12-1, 12);
+      return date > establishedDate;    
+    case "Hammaguir Launch Site, Algeria":
+      establishedDate = new Date(1965, 11-1, 26);
+      return date > establishedDate;    
+    case "Imam Khomeini Space Center, Iran":
+      establishedDate = new Date(2008, 10-1, 16);
+      return date > establishedDate;    
+    case "Jiuquan Satellite Launch Center, China":
+      establishedDate = new Date(1970, 4-1, 24);
+      return date > establishedDate;    
+    case "Kapustin Yar Missile and Space Complex, Russia":
+      establishedDate = new Date(1961, 10-1, 27);
+      return date > establishedDate;    
+    case "Kennedy Space Center, USA":
+      establishedDate = new Date(1957, 12-1, 6);
+      return date > establishedDate;    
+    case "Kodiak Launch Complex, Alaska, USA":
+      establishedDate = new Date(2010, 11-1, 20);
+      return date > establishedDate;    
+    case "Naro Space Center, South Korea":
+      establishedDate = new Date(2009, 8-1, 25);
+      return date > establishedDate;          
+    case "Omelek Island, Kwajalein Atoll":
+      establishedDate = new Date(2000, 10-1, 9);
+      return date > establishedDate;          
+    case "Plesetsk Missile and Space Complex, Russia":
+      establishedDate = new Date(1966, 3-1, 17);
+      return date > establishedDate;          
+    case "Satish Dhawan Space Centre, India":
+      establishedDate = new Date(1979, 8-1, 10);
+      return date > establishedDate;          
+    case "Sea Launch Platform (mobile), USA":
+      establishedDate = new Date(1999, 3-1, 28);
+      return date > establishedDate;          
+    case "Sohae Satellite Launching Station, North Korea":
+      establishedDate = new Date(2012, 4-1, 12);
+      return date > establishedDate;    
+    case "Spaceport Gran Canaria, Spain":
+      establishedDate = new Date(1997, 4-1, 21);
+      return date > establishedDate;    
+    case "Submarine Launch Platform (mobile), Russia":
+      establishedDate = new Date(1998, 7-1, 7);
+      return date > establishedDate;    
+    case "Svobodnyy Launch Complex, Russia":
+      establishedDate = new Date(1997, 5-1, 4);
+      return date > establishedDate;    
+    case "Taiyuan Space Center, China":
+      establishedDate = new Date(1988, 12-1, 6);
+      return date > establishedDate;    
+    case "Tanegashima Space Center, Japan":
+      establishedDate = new Date(1975, 9-1, 9);
+      return date > establishedDate;          
+    case "Tonghae Satellite Launching Ground, North Korea":
+      establishedDate = new Date(1998, 8-1, 31);
+      return date > establishedDate;    
+    case "Uchinoura Space Center, Japan":
+      establishedDate = new Date(1966, 9-1, 26);
+      return date > establishedDate;    
+    case "Vandenberg Air Force Base, USA":
+      establishedDate = new Date(1958, 7-1, 25);
+      return date > establishedDate;    
+    case "Wallops Flight Facility, USA":
+      establishedDate = new Date(1960, 10-1, 4);
+      return date > establishedDate;    
+    case "Woomera Test Range, Australia":
+      establishedDate = new Date(1967, 11-1, 29);
+      return date > establishedDate;    
+    case "Xichang Launch Facility, China":
+      establishedDate = new Date(1984, 1-1, 29);
+      return date > establishedDate;    
+    case "Yavne Launch Facility, Israel":
+      establishedDate = new Date(1988, 9-1, 19);
+      return date > establishedDate;
+    default:
+      return false;
+  }
 }
 
 var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -556,6 +658,29 @@ function displayDate(year, month, day) {
 
   updateSliderPositionAndCurrentDate();
   redrawLaunchesOnly();
+  // updateLaunchSiteOpacities();
+}
+
+function updateLaunchSiteOpacities()
+{
+  launchSites = d3.selectAll("#launchsite")[0];
+
+  for (var i = 0; i < launchSites.length; i++)
+  {
+    var name = launchSites[i].getAttribute('name');
+
+    var siteActiveOpacity;
+    if (isLaunchSiteActive(name))
+    {
+      siteActiveOpacity = 1.0;
+    }
+    else
+    {
+      siteActiveOpacity = 0.1;
+    }
+    // Change opacity
+    launchSites[i].setAttribute('style', 'opacity: ' + siteActiveOpacity);
+  }
 }
 
 // Starts playing a sequence of launches at a specified interval
@@ -579,7 +704,6 @@ function playTick()
   // Stop playing if we're at the right slider position
   if (currentPlayPoint >= currentPlayLimit)
   {
-    console.log('finished');
     pause();
     resetPlayButton();
     currentPlayPoint = initialvalues[0];
@@ -620,4 +744,5 @@ function updateSliderPositionAndCurrentDate() {
   var currentDate = convertDecimalDate(currentPlayPoint);
   $('#current_play_date').html(formatDate(currentDate));
   time_slider.value(currentPlayPoint);
+  updateLaunchSiteOpacities();
 }
