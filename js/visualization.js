@@ -267,7 +267,7 @@ function setup(width,height){
       .attr("width", width)
       .attr("height", height)
       .attr("id", "map")
-      .call(zoom)
+      //.call(zoom)
       .on("click", click)
       .append("g");
 
