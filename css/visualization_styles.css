@@ -202,6 +202,32 @@ div.tooltip {
   left: 175px;
 }
 
+#key {
+  vertical-align: top;
+  line-height: 30px;
+  float: right;
+}
+
+#key, #key div {
+  display: inline-block;
+}
+
+#green, #red {
+  height: 12px;
+  width: 12px;
+  border-radius: 6px;
+  margin-left: 12px;
+  margin-right: 2px;
+}
+
+#red {
+  background: red;
+}
+
+#green {
+  background: green;
+}
+
 #filters {
   position: absolute;
   top: 2px;
