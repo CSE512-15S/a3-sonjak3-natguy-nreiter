@@ -34,7 +34,7 @@ The data for this assignment was taken from several separate sources and merged 
 
 ## StoryBoard
 
-Before starting either data cleaning or development, we sat down together to plan out the interaction. Out of our planning and discussions, we produced the following storyboard.
+Before starting either development or (too much) data cleaning, we sat down together to plan out the interaction. This did include playing with the data some in Tableau, as well as lots of sketching of ideas. Out of our planning and discussions, we produced the following storyboard.
 
 ![Unlabeled overview](/images/overview_unlabeled.jpg "Unlabeled Overview")
 
@@ -65,5 +65,14 @@ This storyboard demonstrates a number of user flows and interactions:
     1. A marker over the slider tracks progress through the range
     1. At any point the user may pause the animation, or adjust the speed
 1. Return to the previous step
+
+### Differences Between Storyboard and Final
+
+* Filter menu always shows in the final, and does not require a click on a button
+* Histogram at bottom in storyboard became marks on the timeline, instead
+* Default/initial view became showing only launch sites, as opposed to showing the initial day
+* We settled on allowing the slider to be dragged, as well as allowing a date picker/calendar
+* We added speed options
+* The play/pause icon became a button, and moved
 
 ## Development Process
