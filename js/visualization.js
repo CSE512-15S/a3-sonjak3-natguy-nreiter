@@ -40,6 +40,8 @@ var height = 0;
 var topo,projection,path,svg,g;
 
 var tooltip, time_slider;
+var playSpeed = 50;
+const playBarWidth = 4;
 
 function initialSetup() {
   width = document.getElementById('container').offsetWidth;
@@ -78,7 +80,51 @@ function initialSetup() {
     drawLaunchEvents();
   });
 
-  playBar();
+  setupPlayControls();
+  drawPlayBar();
+  setupHashmarkArea();
+
+  $('#filter_tag_list input').change(changeTag);
+}
+
+function changeTag(evt) {
+  var tag = $(evt.target).val();
+
+  currentTags = [];
+
+  if(tag != 'none') {
+    currentTags.push(tag);
+  }
+
+  redraw();
+}
+
+function setupPlayControls() {
+  $("#slow").on("click", function() {
+    playSpeed = 100;
+  });
+  $("#medium").on("click", function() { 
+    playSpeed = 50;
+  });
+  $("#fast").on("click", function() {
+    playSpeed = 10;
+  });
+  $('#playButton').on("click", function() {
+    if (!isPlaying) {
+      play(playSpeed);
+      this.innerHTML = "Pause";
+      this.style.background = "rgba(255,255,255,0.5)";
+      this.style.boxShadow = "inset 0 0 10px #000";
+    } else {
+      clearTimeout(playTickRepeatTimeout);
+      this.innerHTML = "Play";
+      isPlaying = false;
+      this.style.background = "-webkit-linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
+      this.style.background = "-o-linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
+      this.style.background = "-moz-linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
+      this.style.background = "linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
+    }
+  });
 }
 
 function addPicker(selector, change_handler) {
@@ -97,6 +143,11 @@ function addPicker(selector, change_handler) {
 
       if(change_handler) {
         change_handler();
+      }
+    },
+    onRender: function(date) {
+      return {
+        disabled: (date < new Date(1957, 8, 13) || date >= new Date(2015, 2, 16))
       }
     }
   });
@@ -118,6 +169,8 @@ function updateSliderFromPickers() {
 // (Iterates through all entries, which may take a while)
 function drawHashmarks()
 {
+  clearHashmarks();
+
   // Only want to attempt to do this if there are actually tags set
   if (currentTags.length > 0)
   {
@@ -148,6 +201,22 @@ function drawHashmarks()
   }
 }
 
+function setupHashmarkArea() {
+  var pixelWidth = parseInt(d3.select("#slider").style("width"));
+
+  var svg = d3.select("#slider").append("svg")
+  .attr("id", "hashmark_canvas")
+  .attr("height", "20px")
+  .attr("width", pixelWidth + "px")
+  .style("position", "absolute")
+  .style("top", "-22px")
+  .style("left", "0px");
+}
+
+function clearHashmarks() {
+  $('#hashmark_canvas').empty();
+}
+
 function drawHashmarkAtDate(year, month, day, tag, success)
 {
   // Get color for hashmark
@@ -159,20 +228,14 @@ function drawHashmarkAtDate(year, month, day, tag, success)
 
   var decimalDate = convertDateToDecimal(new Date(year, month, day));
   var progress = (decimalDate - initialvalues[0]) / range;
-  var xPos = progress * pixelWidth - 10.0;  
+  var xPos = progress * pixelWidth;  
 
   // Draw a line above the slider at this date
-  var svg = d3.select("#slider").append("svg")
-  .attr("id", "hashmark")
-  .attr("height", "20px")
-  .attr("width", "1px")
-  .style("position", "absolute")
-  .style("top", "-22px")
-  .style("left", xPos);
+  var svg = d3.select("#hashmark_canvas");
       
   var hashmark = svg.append("line")
-    .attr("x1", 0)
-    .attr("x2", 0)
+    .attr("x1", xPos)
+    .attr("x2", xPos)
     .attr("y1", "0")
     .attr("y2", "20")
     .style("stroke", color)
@@ -222,7 +285,7 @@ function setup(width,height){
   svg.append("rect")
      .attr("width", "100%")
      .attr("height", "100%")
-     .attr("fill", "#1A181D");
+     .attr("fill", "#0A080D");
 
   g = svg.append("g");
 }
@@ -267,6 +330,7 @@ function redraw() {
   setup(width,height);
   drawMap(topo);
   drawLaunchSites();
+  drawHashmarks();
 }
 
 function redrawLaunchesOnly()
@@ -308,9 +372,7 @@ function throttle() {
 //geo translation on mouse click in map
 function click() {
   var latlon = projection.invert(d3.mouse(this));
-  // console.log(latlon);
 }
-
 
 function addLaunchEvent(lat,lon,text,cls) {
   var x = projection([lat,lon])[0];
@@ -331,13 +393,27 @@ function addLaunchEvent(lat,lon,text,cls) {
 
 function addLaunchSite(lat,lon,text) {
   //offsets for tooltips
-  var offsetL = document.getElementById('container').offsetLeft+20;
-  var offsetT = document.getElementById('container').offsetTop+10;
+  var offsetL = 20;
+  var offsetT = 10;
 
   var gpoint = g.append("g").attr("class", "gpoint");
   var x = projection([lat,lon])[0];
   var y = projection([lat,lon])[1];
-
+  var ix = x;
+  var iy = y;
+  // these are special cased because the launch sites overlap
+  // on the map.
+  if (text.startsWith('Tanegashima')) {
+    iy += 10;
+  } else if (text.startsWith('Uchinoura')){
+    iy -= 10;
+    ix += 5;
+  }
+  var interactionArea = gpoint.append("svg:circle")
+    .attr("cx", ix)
+    .attr("cy", iy)
+    .attr("r", 10)
+    .style("fill", "rgba(0,0,0,0)"); // change opacity to 1 to see the interaction area
   gpoint.append("svg:circle")
         .attr("cx", x)
         .attr("cy", y)
@@ -351,7 +427,6 @@ function addLaunchSite(lat,lon,text) {
       tooltip.classed("hidden", false)
              .attr("style", "left:"+(mouse[0]+offsetL)+"px;top:"+(mouse[1]+offsetT)+"px")
              .html(text);
-
       })
       .on("mouseout",  function(d,i) {
         tooltip.classed("hidden", true);
@@ -372,13 +447,17 @@ function updateSliderValues(evt, values) {
   // Cut all playback and update values for next play request
   clearTimeout(playTickRepeatTimeout);
   isPlaying = false;
+  var playbutton = $('#playButton');
+  playButton.innerHTML = "Play";
+  playButton.style.background = "-webkit-linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
+  playButton.style.background = "-o-linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
+  playButton.style.background = "-moz-linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
+  playButton.style.background = "linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
   currentPlayPoint = values[0];
   currentPlayLimit = values[1];
 
   var mindate = convertDecimalDate(values[0]);
   var maxdate = convertDecimalDate(values[1]);
-  d3.select("#slidermin").text(months[mindate.getMonth()] + " " + mindate.getFullYear());
-  d3.select("#slidermax").text(months[maxdate.getMonth()] + " " + maxdate.getFullYear());
 
   $('#start_date').DatePickerSetDate(mindate, true);
   $('#end_date').DatePickerSetDate(maxdate, true);
@@ -512,19 +591,17 @@ function displayDate(year, month, day) {
 }
 
 // Starts playing a sequence of launches at a specified interval
-function play(interval)
+function play()
 {
-  // Default value of 10 ms if not specified
-  interval = typeof interval !== 'undefined' ? interval : 10;      
-
   isPlaying = true;
-  playTick(interval);
+  playTick();
 }
+
 
 // Plays the sequence of all launches starting at the left slider position
 // and ending at the right slider position. This function will loop
 // indefinitely, until the right slider position is reached
-function playTick(interval)
+function playTick()
 {
   // Stop playing if we're at the right slider position
   if (currentPlayPoint >= currentPlayLimit)
@@ -538,39 +615,41 @@ function playTick(interval)
     currentPlayPoint += 1.0 / 365.25;
     var currentDate = convertDecimalDate(currentPlayPoint);
 
-    // Update displayed launches
-    displayDate(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+    // Update displayed launches (getMonth() returns a value from 0 to 11, so we increment it)
+    displayDate(currentDate.getFullYear(), currentDate.getMonth()+1, currentDate.getDate());
 		updatePlayBar();
-    // This function will be called again in {interval} ms
-    playTickRepeatTimeout = setTimeout(playTick, interval, interval);
+    // This function will be called again in {playSpeed} ms
+    playTickRepeatTimeout = setTimeout(playTick, playSpeed);
   }
 }
 
-function playBar() {
+function drawPlayBar() {
   var svg = d3.select("#slider").append("svg")
     .attr("id", "playBar")
     .attr("height", "50px")
-    .attr("width", "20px")
+    .attr("width", playBarWidth + "px")
     .style("position", "absolute")
     .style("top", "-18px")
-    .style("left", "-10px");
+    .style("left", "-" + playBarWidth/2 + "px");
         
   var rect = svg.append("rect")
+    .attr("id", "playBarRect")
     .attr("height", "50px")
-    .attr("width", "20px")
-    .attr("fill", "red");
+    .attr("width", playBarWidth + "px")
+    .attr("fill", "black");
 }
 
 function updatePlayBar() {
   var pixelWidth = parseInt(d3.select("#slider").style("width"));
   var range = initialvalues[1] - initialvalues[0];
   var progress = (currentPlayPoint - initialvalues[0]) / range;
-  var left = progress * pixelWidth - 10.0;
+  var left = progress * pixelWidth - playBarWidth / 2;
   d3.select("#playBar").style("left", Math.floor(left) + "px"); 
 }
 
 function startDateHandler() {
   var start_date = $('#start_date').DatePickerGetDate();
 
-  displayDate(start_date.getFullYear(), start_date.getMonth(), start_date.getDate());
+  // Incrementing month because getMonth() returns a value from 0 to 11
+  displayDate(start_date.getFullYear(), start_date.getMonth()+1, start_date.getDate());
 }
