@@ -74,5 +74,6 @@ This storyboard demonstrates a number of user flows and interactions:
 * We settled on allowing the slider to be dragged, as well as allowing a date picker/calendar
 * We added speed options
 * The play/pause icon became a button, and moved
+* We added a current date display to the bottom-left corner of the map
 
 ## Development Process
