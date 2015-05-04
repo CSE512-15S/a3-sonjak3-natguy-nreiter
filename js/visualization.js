@@ -640,5 +640,6 @@ function updatePlayBar() {
 function startDateHandler() {
   var start_date = $('#start_date').DatePickerGetDate();
 
-  displayDate(start_date.getFullYear(), start_date.getMonth(), start_date.getDate());
+  // Incrementing month because getMonth() returns a value from 0 to 11
+  displayDate(start_date.getFullYear(), start_date.getMonth()+1, start_date.getDate());
 }
