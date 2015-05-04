@@ -258,3 +258,8 @@ div.tooltip {
 .description a:hover, .description a:active {
   color: #888;
 }
+
+#start_date:hover, #end_date:hover {
+  color: #DDD;
+  cursor: pointer;
+}
