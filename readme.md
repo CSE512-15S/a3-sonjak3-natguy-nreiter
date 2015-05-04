@@ -9,7 +9,7 @@ a3-sonjak3-natguy-nreiter
 
 ## A Brief History of Rocket Launches
 
-This is an application that visualizes the history of space rocket launches across the world, starting in 1957 when Sputnik became the first object in orbit. Over 5,000 rocket launches from over 30 different sites are depicted, including both successes and failures.
+This is an application that visualizes the history of space rocket launches across the world, starting in 1957 when Sputnik became the first artificial object in orbit. Over 5,000 rocket launches from over 30 different sites are depicted, including both successes and failures.
 
 ## Running Instructions
 
