@@ -411,10 +411,10 @@ function addLaunchSite(lat,lon,text) {
     .attr("r", 10)
     .style("fill", "rgba(0,0,0,0)"); // change opacity to 1 to see the interaction area
   gpoint.append("svg:circle")
-        .attr("cx", x)
-        .attr("cy", y)
-        .attr("r", 3)
-        .style("fill", "#04CCFF");
+    .attr("cx", x)
+    .attr("cy", y)
+    .attr("r", 3)
+    .style("fill", "#04CCFF");
 
   gpoint
     .on("mousemove", function(d,i) {
@@ -442,10 +442,11 @@ var playTickRepeatTimeout;
 function resetPlayButton() {
   var playbutton = $('#playButton');
   playButton.innerHTML = "Play";
-  playButton.style.background = "-webkit-linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
-  playButton.style.background = "-o-linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
-  playButton.style.background = "-moz-linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
-  playButton.style.background = "linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
+  playButton.style.background = "-webkit-linear-gradient(rgba(255,255,255,.8), rgba(100,100,100,.7))";
+  playButton.style.background = "-o-linear-gradient(rgba(255,255,255,.8), rgba(100,100,100,.7))";
+  playButton.style.background = "-moz-linear-gradient(rgba(255,255,255,.8), rgba(100,100,100,.7))";
+  playButton.style.background = "linear-gradient(rgba(255,255,255,.8), rgba(100,100,100,.7))";
+  playButton.style.boxShadow = "none";
 }
 
 // values = [ mindate, maxdate ] in decimal form
