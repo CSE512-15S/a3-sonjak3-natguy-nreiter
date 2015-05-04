@@ -47,15 +47,15 @@ function initialSetup() {
   width = document.getElementById('container').scrollWidth;
   height = width / 2;
 
-  addPicker('#start_date', startDateHandler);
-  addPicker('#end_date');
+  // addPicker('#start_date', startDateHandler);
+  // addPicker('#end_date');
 
   time_slider = d3.slider()
     .axis(true)
-    .min(slidervalues[0])
-    .max(slidervalues[1])
-    .value(slidervalues)
-    .on("slide", updateSliderValues)
+    .min(1957.7)
+    .max(2015.2)
+    .value(slidervalue)
+    .on("slide", updateSliderValue)
 
   d3.select('#slider')
     .style("width", width + "px")
@@ -64,14 +64,29 @@ function initialSetup() {
 
   tooltip = d3.select("#container").append("div").attr("class", "tooltip hidden");
 
-
-  updateSliderValues(null, slidervalues);
+  updateSliderValue(null, slidervalue);
 
   // Play-related variables
-  currentPlayPoint = currentStartPoint = slidervalues[0];
-  currentPlayLimit = slidervalues[1];
+  currentPlayPoint = currentStartPoint = slidervalue;
+  currentPlayLimit = initialvalues[1];
   isPlaying = false;
   playTickRepeatTimeout;
+
+  var curr_date = $(document.createElement('div'));
+  curr_date.css(
+    {
+      position: 'absolute',
+      left: '10px',
+      bottom: '10px'
+    }
+  );
+
+  curr_date.attr('id', 'current_play_date');
+
+  $('#container').append(curr_date);
+
+  var currentDate = convertDecimalDate(currentPlayPoint);
+  $('#current_play_date').html(formatDate(currentDate));
 
   setup(width, height);
 
@@ -84,10 +99,12 @@ function initialSetup() {
   });
 
   setupPlayControls();
-  drawPlayBar();
+  //drawPlayBar();
   setupHashmarkArea();
 
   $('#filter_tag_list input').change(changeTag);
+
+  
 }
 
 function changeTag(evt) {
@@ -125,43 +142,43 @@ function setupPlayControls() {
   });
 }
 
-function addPicker(selector, change_handler) {
-  $(selector).DatePicker({
-    format: 'm/d/Y',
-    date: $(selector).text().trim(),
-    current: $(selector).text().trim(),
-    starts: 1,
-    onChange: function(formatted, dates) {
-      if($(selector).text().trim() != formatted) {
-        $(selector).DatePickerHide();
-        updateSliderFromPickers();
-      }
+// function addPicker(selector, change_handler) {
+//   $(selector).DatePicker({
+//     format: 'm/d/Y',
+//     date: $(selector).text().trim(),
+//     current: $(selector).text().trim(),
+//     starts: 1,
+//     onChange: function(formatted, dates) {
+//       if($(selector).text().trim() != formatted) {
+//         $(selector).DatePickerHide();
+//         updateSliderFromPickers();
+//       }
 
-      $(selector).text(formatted);
+//       $(selector).text(formatted);
 
-      if(change_handler) {
-        change_handler();
-      }
-    },
-    onRender: function(date) {
-      return {
-        disabled: (date < new Date(1957, 8, 13) || date >= new Date(2015, 2, 16))
-      }
-    }
-  });
-}
+//       if(change_handler) {
+//         change_handler();
+//       }
+//     },
+//     onRender: function(date) {
+//       return {
+//         disabled: (date < new Date(1957, 8, 13) || date >= new Date(2015, 2, 16))
+//       }
+//     }
+//   });
+// }
 
-function updateSliderFromPickers() {
-  var min_date = $('#start_date').DatePickerGetDate();
-  var max_date = $('#end_date').DatePickerGetDate();
+// function updateSliderFromPickers() {
+//   var min_date = $('#start_date').DatePickerGetDate();
+//   var max_date = $('#end_date').DatePickerGetDate();
 
-  var min_val = convertDateToDecimal(min_date);
-  var max_val = convertDateToDecimal(max_date);
+//   var min_val = convertDateToDecimal(min_date);
+//   var max_val = convertDateToDecimal(max_date);
 
-  updateSliderValues(null, [min_val, max_val]);
+//   updateSliderValue(null, min_val);
 
-  time_slider.value([min_val, max_val]);
-}
+//   time_slider.value([min_val, max_val]);
+// }
 
 // Uses list of current tags to generate colored hashmarks to indicate events
 // (Iterates through all entries, which may take a while)
@@ -431,7 +448,7 @@ function addLaunchSite(lat,lon,text) {
 
 var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 var initialvalues = [1957.7, 2015.2];
-var slidervalues = initialvalues.slice();
+var slidervalue = initialvalues[0];
 // Play-related variables
 var currentStartPoint = 0;
 var currentPlayPoint = 0;
@@ -450,25 +467,24 @@ function resetPlayButton() {
 }
 
 // values = [ mindate, maxdate ] in decimal form
-function updateSliderValues(evt, values) {
+function updateSliderValue(evt, value) {
   // Cut all playback and update values for next play request
   pause();
-  clearCurrentDate();
+  // clearCurrentDate();
   resetPlayButton();
-  currentPlayPoint = currentStartPoint = values[0];
-  currentPlayLimit = values[1];
+  currentPlayPoint = value;
+  currentPlayLimit = initialvalues[1];
 
-  var mindate = convertDecimalDate(values[0]);
-  var maxdate = convertDecimalDate(values[1]);
+  var mindate = convertDecimalDate(value);
+  var maxdate = convertDecimalDate(initialvalues[1]);
 
-  $('#start_date').DatePickerSetDate(mindate, true);
-  $('#end_date').DatePickerSetDate(maxdate, true);
+  // $('#start_date').DatePickerSetDate(mindate, true);
+  // $('#end_date').DatePickerSetDate(maxdate, true);
 
-  $('#start_date').text(formatDate(mindate));
+  // $('#start_date').text(formatDate(mindate));
 
-  $('#end_date').text(formatDate(maxdate));
-
-  updatePlayBar();
+  // $('#end_date').text(formatDate(maxdate));
+  updateSliderPositionAndCurrentDate();
 }
 
 function formatDate(date) {
@@ -584,25 +600,13 @@ function displayDate(year, month, day) {
     }
   }
 
-  updatePlayBar();
+  updateSliderPositionAndCurrentDate();
   redrawLaunchesOnly();
 }
 
 // Starts playing a sequence of launches at a specified interval
 function play()
 {
-  var curr_date = $(document.createElement('div'));
-  curr_date.css(
-    {
-      position: 'absolute',
-      left: '10px',
-      bottom: '10px'
-    }
-  );
-
-  curr_date.attr('id', 'current_play_date');
-
-  $('#container').append(curr_date);
   isPlaying = true;
   playTick();
 }
@@ -613,11 +617,9 @@ function pause() {
   clearTimeout(playTickRepeatTimeout);
 }
 
-function clearCurrentDate() {
-  $('#current_play_date').remove();
-}
-
-
+// function clearCurrentDate() {
+//   $('#current_play_date').remove();
+// }
 
 // Plays the sequence of all launches starting at the left slider position
 // and ending at the right slider position. This function will loop
@@ -627,10 +629,13 @@ function playTick()
   // Stop playing if we're at the right slider position
   if (currentPlayPoint >= currentPlayLimit)
   {
+    console.log('finished');
     pause();
-    clearCurrentDate();
+    //clearCurrentDate();
     resetPlayButton();
-    currentPlayPoint = currentStartPoint;
+    currentPlayPoint = initialvalues[0];
+
+    //updateSliderPositionAndCurrentDate();
   }
 
   if (isPlaying)
@@ -642,7 +647,7 @@ function playTick()
     // Update displayed launches (getMonth() returns a value from 0 to 11, so we increment it)
     displayDate(currentDate.getFullYear(), currentDate.getMonth()+1, currentDate.getDate());
     $('#current_play_date').html(formatDate(currentDate));
-		updatePlayBar();
+		updateSliderPositionAndCurrentDate();
     // This function will be called again in {playSpeed} ms
     playTickRepeatTimeout = setTimeout(playTick, playSpeed);
   }
@@ -664,17 +669,20 @@ function drawPlayBar() {
     .attr("fill", "black");
 }
 
-function updatePlayBar() {
-  var pixelWidth = parseInt(d3.select("#slider").style("width"));
-  var range = initialvalues[1] - initialvalues[0];
-  var progress = (currentPlayPoint - initialvalues[0]) / range;
-  var left = progress * pixelWidth - playBarWidth / 2;
-  d3.select("#playBar").style("left", Math.floor(left) + "px"); 
+function updateSliderPositionAndCurrentDate() {
+  var currentDate = convertDecimalDate(currentPlayPoint);
+  $('#current_play_date').html(formatDate(currentDate));
+  // var pixelWidth = parseInt(d3.select("#slider").style("width"));
+  // var range = initialvalues[1] - initialvalues[0];
+  // var progress = (currentPlayPoint - initialvalues[0]) / range;
+  // var left = progress * pixelWidth - playBarWidth / 2;
+  time_slider.value(currentPlayPoint);
+  // updateSliderValue(left);
 }
 
-function startDateHandler() {
-  var start_date = $('#start_date').DatePickerGetDate();
+// function startDateHandler() {
+//   // var start_date = $('#start_date').DatePickerGetDate();
 
-  // Incrementing month because getMonth() returns a value from 0 to 11
-  displayDate(start_date.getFullYear(), start_date.getMonth()+1, start_date.getDate());
-}
+//   // Incrementing month because getMonth() returns a value from 0 to 11
+//   displayDate(start_date.getFullYear(), start_date.getMonth()+1, start_date.getDate());
+// }
