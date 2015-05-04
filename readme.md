@@ -3,9 +3,10 @@ a3-sonjak3-natguy-nreiter
 
 ## Team Members
 
-1. Sonja Khan sonjak3@uw.edu
-2. Nat Guy natguy@uw.edu
-3. Nick Reiter nreiter@uw.edu
+1. Sonja Khan <sonjak3@uw.edu>
+2. Nat Guy <natguy@uw.edu>
+3. Nick Reiter [github](http://github.com/scriptreiter) [old personal
+   site)[http://www.scriptreiter.com) <nreiter@uw.edu>
 
 ## A Brief History of Rocket Launches
 
