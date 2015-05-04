@@ -113,11 +113,11 @@ div.tooltip {
   background: -o-linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5)); /* For Opera 11.1 to 12.0 */
   background: -moz-linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5)); /* For Firefox 3.6 to 15 */
   background: linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5)); /* Standard syntax */
-
+  color: black;
 }
 
 #playButton:hover {
-  color: black;
+  color: white;
 }
 
 /* Speed picker */
