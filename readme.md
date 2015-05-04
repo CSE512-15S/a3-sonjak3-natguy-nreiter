@@ -34,5 +34,36 @@ The data for this assignment was taken from several separate sources and merged 
 
 ## StoryBoard
 
+Before starting either data cleaning or development, we sat down together to plan out the interaction. Out of our planning and discussions, we produced the following storyboard.
+
+![Unlabeled overview](/images/overview_unlabeled.jpg "Unlabeled Overview")
+
+![Labeled overview](/images/overview_labeled.jpg "Labeled Overview")
+
+![Initial State and Selection of Start Date](/images/initial_and_start_date.jpg "Initial State and Selection of Start Date")
+
+![Selection of End Date and Beginning of Animation](/images/end_date_and_animation.jpg "Selection of End Date and Beginning of Animation")
+
+![Pause View and Tooltip Interaction](/images/pause_and_tooltip.jpg "Pause View and Tooltip Interaction")
+
+This storyboard demonstrates a number of user flows and interactions:
+
+1. Users begin with the initial map, displaying only launch sites
+1. They can then interact by:
+  * selecting a filter
+    1. User chooses from one of the preset filters (or none)
+    1. Application only displays the filtered data
+    1. Application displays line markers of events above the slider timeline (unless no filter)
+  * choosing a date range
+    * User may select a start date and/or end date with the datepicker (a dropdown calendar)
+    * User may adjust the start and end dates via the slider handles
+  * changing the animation speed
+    * user may select between slow, medium, and fast
+  * or playing the animation
+    1. The map begins to show rocket launches, appropriately filtered
+    1. It moves over the selected time range at the specified rate
+    1. A marker over the slider tracks progress through the range
+    1. At any point the user may pause the animation, or adjust the speed
+1. Return to the previous step
 
 ## Development Process
