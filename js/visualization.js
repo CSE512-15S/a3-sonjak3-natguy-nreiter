@@ -142,44 +142,6 @@ function setupPlayControls() {
   });
 }
 
-// function addPicker(selector, change_handler) {
-//   $(selector).DatePicker({
-//     format: 'm/d/Y',
-//     date: $(selector).text().trim(),
-//     current: $(selector).text().trim(),
-//     starts: 1,
-//     onChange: function(formatted, dates) {
-//       if($(selector).text().trim() != formatted) {
-//         $(selector).DatePickerHide();
-//         updateSliderFromPickers();
-//       }
-
-//       $(selector).text(formatted);
-
-//       if(change_handler) {
-//         change_handler();
-//       }
-//     },
-//     onRender: function(date) {
-//       return {
-//         disabled: (date < new Date(1957, 8, 13) || date >= new Date(2015, 2, 16))
-//       }
-//     }
-//   });
-// }
-
-// function updateSliderFromPickers() {
-//   var min_date = $('#start_date').DatePickerGetDate();
-//   var max_date = $('#end_date').DatePickerGetDate();
-
-//   var min_val = convertDateToDecimal(min_date);
-//   var max_val = convertDateToDecimal(max_date);
-
-//   updateSliderValue(null, min_val);
-
-//   time_slider.value([min_val, max_val]);
-// }
-
 // Uses list of current tags to generate colored hashmarks to indicate events
 // (Iterates through all entries, which may take a while)
 function drawHashmarks()
@@ -466,11 +428,9 @@ function resetPlayButton() {
   playButton.style.boxShadow = "none";
 }
 
-// values = [ mindate, maxdate ] in decimal form
 function updateSliderValue(evt, value) {
   // Cut all playback and update values for next play request
   pause();
-  // clearCurrentDate();
   resetPlayButton();
   currentPlayPoint = value;
   currentPlayLimit = initialvalues[1];
@@ -478,12 +438,6 @@ function updateSliderValue(evt, value) {
   var mindate = convertDecimalDate(value);
   var maxdate = convertDecimalDate(initialvalues[1]);
 
-  // $('#start_date').DatePickerSetDate(mindate, true);
-  // $('#end_date').DatePickerSetDate(maxdate, true);
-
-  // $('#start_date').text(formatDate(mindate));
-
-  // $('#end_date').text(formatDate(maxdate));
   updateSliderPositionAndCurrentDate();
 }
 
@@ -617,10 +571,6 @@ function pause() {
   clearTimeout(playTickRepeatTimeout);
 }
 
-// function clearCurrentDate() {
-//   $('#current_play_date').remove();
-// }
-
 // Plays the sequence of all launches starting at the left slider position
 // and ending at the right slider position. This function will loop
 // indefinitely, until the right slider position is reached
@@ -631,11 +581,8 @@ function playTick()
   {
     console.log('finished');
     pause();
-    //clearCurrentDate();
     resetPlayButton();
     currentPlayPoint = initialvalues[0];
-
-    //updateSliderPositionAndCurrentDate();
   }
 
   if (isPlaying)
@@ -672,17 +619,5 @@ function drawPlayBar() {
 function updateSliderPositionAndCurrentDate() {
   var currentDate = convertDecimalDate(currentPlayPoint);
   $('#current_play_date').html(formatDate(currentDate));
-  // var pixelWidth = parseInt(d3.select("#slider").style("width"));
-  // var range = initialvalues[1] - initialvalues[0];
-  // var progress = (currentPlayPoint - initialvalues[0]) / range;
-  // var left = progress * pixelWidth - playBarWidth / 2;
   time_slider.value(currentPlayPoint);
-  // updateSliderValue(left);
 }
-
-// function startDateHandler() {
-//   // var start_date = $('#start_date').DatePickerGetDate();
-
-//   // Incrementing month because getMonth() returns a value from 0 to 11
-//   displayDate(start_date.getFullYear(), start_date.getMonth()+1, start_date.getDate());
-// }
