@@ -224,7 +224,7 @@ function drawHashmarkAtDate(year, month, day, tag, success)
 
   var decimalDate = convertDateToDecimal(new Date(year, month, day));
   var progress = (decimalDate - initialvalues[0]) / range;
-  var xPos = progress * pixelWidth - 10.0;  
+  var xPos = progress * pixelWidth;  
 
   // Draw a line above the slider at this date
   var svg = d3.select("#hashmark_canvas");
