@@ -44,7 +44,7 @@ var playSpeed = 50;
 const playBarWidth = 4;
 
 function initialSetup() {
-  width = document.getElementById('container').offsetWidth;
+  width = document.getElementById('container').scrollWidth;
   height = width / 2;
 
   addPicker('#start_date', startDateHandler);
@@ -61,6 +61,9 @@ function initialSetup() {
     .style("width", width + "px")
     .style("margin", "0px auto")
     .call(time_slider);
+
+  tooltip = d3.select("#container").append("div").attr("class", "tooltip hidden");
+
 
   updateSliderValues(null, slidervalues);
 
@@ -250,8 +253,6 @@ function getHashmarkColor(tag, success)
 }
 
 function setup(width,height){
-  tooltip = d3.select("#container").append("div").attr("class", "tooltip hidden");
-
   projection = d3.geo.mercator()
     .translate([(width/2), (height/1.4)])
     .scale( width / 2 / Math.PI);
@@ -319,7 +320,7 @@ function drawLaunchEvents()
 }      
 
 function redraw() {
-  width = document.getElementById('container').offsetWidth;
+  width = document.getElementById('container').scrollWidth;
   height = width / 2;
   d3.select('svg').remove();
   setup(width,height);
