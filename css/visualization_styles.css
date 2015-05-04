@@ -2,6 +2,9 @@ body {
   background-color: #242424;
   color: #fff;
   font-family: 'Titillium Web', sans-serif;
+  width: 80%;
+  min-width: 1024px;
+  margin: 10px auto;
 }
 
 circle {
@@ -19,11 +22,8 @@ circle {
 }
 
 #container {
-  margin: 10px auto;
-  width: 80%;
   height:100%;
   position: relative;
-  min-width: 1024px;
 }
 
 #sliderContainer {
@@ -31,7 +31,8 @@ circle {
 }
 
 #map {
-  border: 2px solid #606060;
+  border: 2px solid #0A080D;
+  box-shadow: 0 0 12px #000;
 }
 
 .hidden { 
@@ -90,15 +91,38 @@ div.tooltip {
   z-index: 200;
 }
 
-/* Speed picker */
-
-.wrapper {
-  margin: 100px 0;
+#playControls {
+  height: 30px;
+  margin-top: 4px;
+  margin-bottom: 20px;
 }
+
+#playButton {
+  display: inline-block;
+  vertical-align: top;
+  text-align: center;
+  cursor: pointer;
+  line-height: 30px;
+  height: 30px;
+  width: 80px;
+  margin-right: 8px;
+  border-radius: 5px;
+  background: -webkit-linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5)); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5)); /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5)); /* For Firefox 3.6 to 15 */
+  background: linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5)); /* Standard syntax */
+
+}
+
+#playButton:hover {
+  color: black;
+}
+
+/* Speed picker */
 .toggle_radio{
+  display: inline-block;
   position: relative;
   background: rgba(255,255,255,.1);
-  margin: 4px auto;
   overflow: hidden;
   padding: 0 !important;
   -webkit-border-radius: 5px;
@@ -107,6 +131,7 @@ div.tooltip {
   position: relative;
   height: 30px;
   width: 258px;
+  box-shadow: inset 0 0 10px #000;
 }
 .toggle_radio > * {
   float: left;
@@ -152,15 +177,26 @@ div.tooltip {
 }
 
 #slow:checked ~ .toggle_option_slider{
-  background: rgba(255,255,255,.3);
+  background: -webkit-linear-gradient(rgba(255,255,255,.5), rgba(0,0,0,.1)); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(rgba(255,255,255,.5), rgba(0,0,0,.1)); /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(rgba(255,255,255,.5), rgba(0,0,0,.1)); /* For Firefox 3.6 to 15 */
+  background: linear-gradient(rgba(255,255,255,.5), rgba(0,0,0,.1)); /* Standard syntax */
   left: 3px;
 }
+
 #medium:checked ~ .toggle_option_slider{
-  background: rgba(255,255,255,.3);
+  background: -webkit-linear-gradient(rgba(255,255,255,.5), rgba(0,0,0,.1)); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(rgba(255,255,255,.5), rgba(0,0,0,.1)); /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(rgba(255,255,255,.5), rgba(0,0,0,.1)); /* For Firefox 3.6 to 15 */
+  background: linear-gradient(rgba(255,255,255,.5), rgba(0,0,0,.1)); /* Standard syntax */
   left: 89px;
 }
+
 #fast:checked ~ .toggle_option_slider{
-  background: rgba(255,255,255,.3);
+  background: -webkit-linear-gradient(rgba(255,255,255,.5), rgba(0,0,0,.1)); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(rgba(255,255,255,.5), rgba(0,0,0,.1)); /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(rgba(255,255,255,.5), rgba(0,0,0,.1)); /* For Firefox 3.6 to 15 */
+  background: linear-gradient(rgba(255,255,255,.5), rgba(0,0,0,.1)); /* Standard syntax */
   left: 175px;
 }
 

@@ -112,6 +112,17 @@ function setupPlayControls() {
   $('#playButton').on("click", function() {
     if (!isPlaying) {
       play(playSpeed);
+      this.innerHTML = "Pause";
+      this.style.background = "rgba(255,255,255,0.5)";
+      this.style.boxShadow = "inset 0 0 10px #000";
+    } else {
+      clearTimeout(playTickRepeatTimeout);
+      this.innerHTML = "Play";
+      isPlaying = false;
+      this.style.background = "-webkit-linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
+      this.style.background = "-o-linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
+      this.style.background = "-moz-linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
+      this.style.background = "linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
     }
   });
 
@@ -281,7 +292,7 @@ function setup(width,height){
   svg.append("rect")
      .attr("width", "100%")
      .attr("height", "100%")
-     .attr("fill", "#1A181D");
+     .attr("fill", "#0A080D");
 
   g = svg.append("g");
 }
