@@ -593,8 +593,8 @@ function play()
   curr_date.css(
     {
       position: 'absolute',
-      left: '0px',
-      bottom: '0px'
+      left: '10px',
+      bottom: '10px'
     }
   );
 
