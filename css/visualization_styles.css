@@ -21,6 +21,7 @@ circle {
 #container {
   margin:10px 10%;
   height:100%;
+  position: relative;
 }
 
 #sliderContainer {
@@ -159,4 +160,27 @@ div.tooltip {
 #fast:checked ~ .toggle_option_slider{
   background: rgba(255,255,255,.3);
   left: 175px;
+}
+
+#filters {
+  position: absolute;
+  top: 2px;
+  right: -2px;
+  background: rgba(36, 36, 36, 0.75);
+}
+
+#filters h3 {
+  padding: 5px;
+  margin: 0px;
+}
+
+#filter_tag_list {
+  list-style: none;
+  padding: 5px;
+  margin: 0px;
+  font-size: 12px;
+}
+
+#filters input {
+  margin-right: 5px;
 }

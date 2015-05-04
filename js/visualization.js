@@ -82,8 +82,21 @@ function initialSetup() {
 
   setupPlayControls();
   drawPlayBar();
+  setupHashmarkArea();
 
+  $('#filter_tag_list input').change(changeTag);
+}
 
+function changeTag(evt) {
+  var tag = $(evt.target).val();
+
+  currentTags = [];
+
+  if(tag != 'none') {
+    currentTags.push(tag);
+  }
+
+  redraw();
 }
 
 function setupPlayControls() {
@@ -152,6 +165,8 @@ function updateSliderFromPickers() {
 // (Iterates through all entries, which may take a while)
 function drawHashmarks()
 {
+  clearHashmarks();
+
   // Only want to attempt to do this if there are actually tags set
   if (currentTags.length > 0)
   {
@@ -182,6 +197,22 @@ function drawHashmarks()
   }
 }
 
+function setupHashmarkArea() {
+  var pixelWidth = parseInt(d3.select("#slider").style("width"));
+
+  var svg = d3.select("#slider").append("svg")
+  .attr("id", "hashmark_canvas")
+  .attr("height", "20px")
+  .attr("width", pixelWidth + "px")
+  .style("position", "absolute")
+  .style("top", "-22px")
+  .style("left", "0px");
+}
+
+function clearHashmarks() {
+  $('#hashmark_canvas').empty();
+}
+
 function drawHashmarkAtDate(year, month, day, tag, success)
 {
   // Get color for hashmark
@@ -196,17 +227,11 @@ function drawHashmarkAtDate(year, month, day, tag, success)
   var xPos = progress * pixelWidth - 10.0;  
 
   // Draw a line above the slider at this date
-  var svg = d3.select("#slider").append("svg")
-  .attr("id", "hashmark")
-  .attr("height", "20px")
-  .attr("width", "1px")
-  .style("position", "absolute")
-  .style("top", "-22px")
-  .style("left", xPos);
+  var svg = d3.select("#hashmark_canvas");
       
   var hashmark = svg.append("line")
-    .attr("x1", 0)
-    .attr("x2", 0)
+    .attr("x1", xPos)
+    .attr("x2", xPos)
     .attr("y1", "0")
     .attr("y2", "20")
     .style("stroke", color)
@@ -301,6 +326,7 @@ function redraw() {
   setup(width,height);
   drawMap(topo);
   drawLaunchSites();
+  drawHashmarks();
 }
 
 function redrawLaunchesOnly()

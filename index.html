@@ -21,7 +21,42 @@
     <h1>ROCKET LAUNCHES</h1>
     <p>Map code adapted from <a href="http://techslides.com/d3-map-starter-kit/">techslides</a>.</p>
 
-    <div id="container"></div>
+    <div id="container">
+      <div id="filters">
+        <h3>
+          Launch Filters
+        </h3>
+        <ul id="filter_tag_list">
+          <li>
+            <input type="radio" name="filter_tag" value="none" checked="checked" />
+            None
+          <li>
+            <input type="radio" name="filter_tag" value="Mars" />
+            Mars
+          </li>
+          <li>
+            <input type="radio" name="filter_tag" value="Moon" />
+            Moon
+          </li>
+          <li>
+            <input type="radio" name="filter_tag" value="Outer Solar System" />
+            Outer Solar System
+          </li>
+          <li>
+            <input type="radio" name="filter_tag" value="Space Shuttle" />
+            Space Shuttle
+          </li>
+          <li>
+            <input type="radio" name="filter_tag" value="SpaceX" />
+            SpaceX
+          </li>
+          <li>
+            <input type="radio" name="filter_tag" value="Venus" />
+            Venus
+          </li>
+        </ul>
+      </div>
+    </div>
     <div id="date_selectors">
       <div id="start_date_selector">
         <span id="start_date">
