@@ -65,7 +65,7 @@ function initialSetup() {
   updateSliderValues(null, slidervalues);
 
   // Play-related variables
-  currentPlayPoint = slidervalues[0];
+  currentPlayPoint = currentStartPoint = slidervalues[0];
   currentPlayLimit = slidervalues[1];
   isPlaying = false;
   playTickRepeatTimeout;
@@ -116,13 +116,8 @@ function setupPlayControls() {
       this.style.background = "rgba(255,255,255,0.5)";
       this.style.boxShadow = "inset 0 0 10px #000";
     } else {
-      clearTimeout(playTickRepeatTimeout);
-      this.innerHTML = "Play";
-      isPlaying = false;
-      this.style.background = "-webkit-linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
-      this.style.background = "-o-linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
-      this.style.background = "-moz-linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
-      this.style.background = "linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
+      pause();
+      resetPlayButton();
     }
   });
 }
@@ -437,23 +432,28 @@ var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oc
 var initialvalues = [1957.7, 2015.2];
 var slidervalues = initialvalues.slice();
 // Play-related variables
+var currentStartPoint = 0;
 var currentPlayPoint = 0;
 var currentPlayLimit = 0;
 var isPlaying = false;
 var playTickRepeatTimeout;
 
-// values = [ mindate, maxdate ] in decimal form
-function updateSliderValues(evt, values) {
-  // Cut all playback and update values for next play request
-  clearTimeout(playTickRepeatTimeout);
-  isPlaying = false;
+function resetPlayButton() {
   var playbutton = $('#playButton');
   playButton.innerHTML = "Play";
   playButton.style.background = "-webkit-linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
   playButton.style.background = "-o-linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
   playButton.style.background = "-moz-linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
   playButton.style.background = "linear-gradient(rgba(255,255,255,.7), rgba(100,100,100,.5))";
-  currentPlayPoint = values[0];
+}
+
+// values = [ mindate, maxdate ] in decimal form
+function updateSliderValues(evt, values) {
+  // Cut all playback and update values for next play request
+  pause();
+  clearCurrentDate();
+  resetPlayButton();
+  currentPlayPoint = currentStartPoint = values[0];
   currentPlayLimit = values[1];
 
   var mindate = convertDecimalDate(values[0]);
@@ -462,23 +462,19 @@ function updateSliderValues(evt, values) {
   $('#start_date').DatePickerSetDate(mindate, true);
   $('#end_date').DatePickerSetDate(maxdate, true);
 
-  $('#start_date').text(
-    ('0' + (mindate.getMonth() + 1)).slice(-2) +
-    "/" +
-    ('0' + mindate.getDate()).slice(-2) +
-    "/" +
-    mindate.getFullYear()
-  );
+  $('#start_date').text(formatDate(mindate));
 
-  $('#end_date').text(
-    ('0' + (maxdate.getMonth() + 1)).slice(-2) +
-    "/" +
-    ('0' + maxdate.getDate()).slice(-2) +
-    "/" +
-    maxdate.getFullYear()
-  );
+  $('#end_date').text(formatDate(maxdate));
 
   updatePlayBar();
+}
+
+function formatDate(date) {
+    return ('0' + (date.getMonth() + 1)).slice(-2) +
+    "/" +
+    ('0' + date.getDate()).slice(-2) +
+    "/" +
+    date.getFullYear()
 }
 
 function leapYear(year) {
@@ -593,9 +589,32 @@ function displayDate(year, month, day) {
 // Starts playing a sequence of launches at a specified interval
 function play()
 {
+  var curr_date = $(document.createElement('div'));
+  curr_date.css(
+    {
+      position: 'absolute',
+      left: '0px',
+      bottom: '0px'
+    }
+  );
+
+  curr_date.attr('id', 'current_play_date');
+
+  $('#container').append(curr_date);
   isPlaying = true;
   playTick();
 }
+
+// Pauses playing of launch sequences
+function pause() {
+  isPlaying = false;
+  clearTimeout(playTickRepeatTimeout);
+}
+
+function clearCurrentDate() {
+  $('#current_play_date').remove();
+}
+
 
 
 // Plays the sequence of all launches starting at the left slider position
@@ -606,7 +625,10 @@ function playTick()
   // Stop playing if we're at the right slider position
   if (currentPlayPoint >= currentPlayLimit)
   {
-    isPlaying = false;
+    pause();
+    clearCurrentDate();
+    resetPlayButton();
+    currentPlayPoint = currentStartPoint;
   }
 
   if (isPlaying)
@@ -617,6 +639,7 @@ function playTick()
 
     // Update displayed launches (getMonth() returns a value from 0 to 11, so we increment it)
     displayDate(currentDate.getFullYear(), currentDate.getMonth()+1, currentDate.getDate());
+    $('#current_play_date').html(formatDate(currentDate));
 		updatePlayBar();
     // This function will be called again in {playSpeed} ms
     playTickRepeatTimeout = setTimeout(playTick, playSpeed);
