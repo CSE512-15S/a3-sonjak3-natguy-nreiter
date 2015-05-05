@@ -396,7 +396,7 @@ function addLaunchSite(lat,lon,text) {
     .attr("r", 3)
     .attr("id", "launchsite")
     .attr("name", text)
-    .style("opacity", 0.1)
+    .style("opacity", 0.2)
     .style("fill", "#04CCFF");
 
   gpoint
@@ -423,7 +423,7 @@ function isLaunchSiteActive(text)
       establishedDate = new Date(1997, 11-1, 2);
       return date > establishedDate;
     case "Baikonur Cosmodrome, Kazakhstan":
-      establishedDate = new Date(1957, 11-1, 3);
+      establishedDate = new Date(1957, 10-1, 4);
       return date > establishedDate;    
     case "Broglio Space Centre, Kenya":
       establishedDate = new Date(1967, 4-1, 26);
@@ -676,7 +676,7 @@ function updateLaunchSiteOpacities()
     }
     else
     {
-      siteActiveOpacity = 0.1;
+      siteActiveOpacity = 0.2;
     }
     // Change opacity
     launchSites[i].setAttribute('style', 'opacity: ' + siteActiveOpacity);
