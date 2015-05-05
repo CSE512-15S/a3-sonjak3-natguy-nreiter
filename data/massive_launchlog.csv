@@ -4634,7 +4634,7 @@ Launch Date and Time (UTC),Launch Site (Abbrv.),Launch Site (Full),Latitude,Long
 2003 Feb 15 0700:00,FRGUI,"Guiana Space Centre, French Guiana",5.232,-52.776,Ariane 44L,S,INTELSAT 907,INTELSAT 907,2003-007A,2003-007,S27683,27683,CSG      ELA2,V159 L4116,Wire,2003-007A,,
 2003 Feb 2 1259:40,TYMSC,"Baikonur Cosmodrome, Kazakhstan",45.6,63.4,Soyuz-U-PVB,S,Progress M-47,Progress M No. 247,2003-006A,2003-006,S27681,27681,GIK-5    LC1,E 15000-680,www.energia.ru,2003-006A,,
 2003 Jan 13 0045:00,WRAS,"Vandenberg Air Force Base, USA",34.4,-120.35,Delta 7320-10,S,Icesat,Icesat,2003-002A,2003-002,S27642,27642,V        SLC2W,D294,spaceflightnow.com,2003-002A,,
-2003 Jan 16 1539:00,AFETR,"Kennedy Space Center, USA",28.391139,-80.588343,Space Shuttle,S,Columbia (STS-107),OV-102,2003-003A,2003-003,S27647,27647,KSC      LC39A,STS-107,Wire,2003-003A,Space Shuttle,
+2003 Jan 16 1539:00,AFETR,"Kennedy Space Center, USA",28.391139,-80.588343,Space Shuttle,F,Columbia (STS-107),OV-102,2003-003A,2003-003,S27647,27647,KSC      LC39A,STS-107,Wire,2003-003A,Space Shuttle,
 2003 Jan 25 2013:35,ERAS,"Wallops Flight Facility, USA",37.8,-75.5,Pegasus XL,S,SORCE,SORCE,2003-004A,2003-004,S27651,27651,"L-1011,CC RW30/12  -> MFWA",F32,Wire,2003-004A,,
 2003 Jan 29 1806:00,AFETR,"Kennedy Space Center, USA",28.391139,-80.588343,Delta 7925-9.5,S,GPS IIR-8,Navstar GPS SVN 56,2003-005A,2003-005,S27663,27663,CC       SLC17B,D295,spaceflightnow.com,2003-005A,,
 2003 Jan 6 1419:00,WRAS,"Vandenberg Air Force Base, USA",34.4,-120.35,Titan II SLV,S,Coriolis,P98-2 Coriolis,2003-001A,2003-001,S27640,27640,V        SLC4W,23G-4,orbireport.com,2003-001A,,
